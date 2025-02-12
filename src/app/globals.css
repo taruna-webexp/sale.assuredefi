@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #ffffff;
+}
+body {
+  font-family: var(--font-inter);
+
+  color: var(--foreground);
+  background: #0a0923;
+  font-family: "Inter", serif;
+  overflow-x: hidden;
+}
+.theme-color {
+  color: #ddcc42 !important;
+}
+.theme-color-bg {
+  background-color: #ddcc42 !important;
+}
+.gradient-bg-sharp-login {
+  background: #0a0724 !important;
+}
+.dark-purple-bg {
+  background: #0a0724 !important;
+}
+
+.login-container {
+  background-image: url(/assets/dots-bg.webp) !important;
+  background-size: cover;
+  background-position: 50% !important;
+  left: -200px;
+}
+.form-login button {
+  text-transform: capitalize;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 11px 36px;
+  line-height: 18px;
+  letter-spacing: 0;
+  border: 1px solid #d1b933 !important;
+  background: linear-gradient(90deg, #5e5521, #d1b933) !important;
+}
+.button-color {
+  background: linear-gradient(90deg, #5e5521, #d1b933) !important;
+  border: 1px solid #d1b933 !important;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: #fff;
+  font-size: 16px;
+}
+.theme-border-light {
+  border: 1px solid #dbcb4163 !important;
+}
+.form-login-input label {
+  color: #fff;
+}
+.form-login-input .MuiInputBase-root {
+  color: #fff;
+  border: 1px solid #3b3b3b !important;
+}
+.form-login-input .MuiSelect-select {
+  border: 1px solid #3b3b3b !important;
+  color: #fff;
+}
+
+/* .form-login-input .MuiInputBase-root input {
+  color: #fff;
+} */
+.quoteNotes textarea {
+  resize: vertical !important;
+  padding: 20px 0 20px 0;
+}
