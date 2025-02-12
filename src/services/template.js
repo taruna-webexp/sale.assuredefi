@@ -1,7 +1,7 @@
 export const createGoogleDoc = async (data) => {
   try {
     const response = await fetch(
-      "https://script.google.com/macros/s/AKfycbwwXtWbg5U66qKfS0mcZcRFirdZMi39BphI7Ks-wk5tQzMIZkXaIYYGbP6zyr84apWn/exec",
+      "https://script.google.com/macros/s/AKfycbzyJXd8QQcq7MFrC7xM7TTiFF1NNJMFTjWKiAqbORBuYXar3l1iEHoXQNfYAXpB60uM/exec",
       {
         method: "POST",
         headers: {

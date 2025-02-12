@@ -11,12 +11,13 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
 export default function AddQuote() {
   const [isLoading, setIsLoading] = useState(false);
-  const [documentLinks, setDocumentLinks] = useState([]);
+  const router = useRouter();
   const currencyOptions = [
     { label: "USD", value: "USD" },
     { label: "EUR", value: "EUR" },
@@ -55,6 +56,7 @@ export default function AddQuote() {
   );
 
   const onSubmit = async (data) => {
+    console.log("sdf", data);
     setIsLoading(true);
     const formattedData = { ...data, date: new Date().toISOString() };
     try {
@@ -71,6 +73,7 @@ export default function AddQuote() {
           "ListOfProjects",
           JSON.stringify(updatedprojectList)
         );
+        router.push("/");
       }
     } catch (error) {
       console.log(error);
@@ -160,7 +163,10 @@ export default function AddQuote() {
                   sx={{ marginTop: 2 }}
                 >
                   {isLoading ? (
-                    <CircularProgress className="theme-color" />
+                    <CircularProgress
+                      className="theme-color !text-sm"
+                      fontSize="small"
+                    />
                   ) : (
                     "Save Quote"
                   )}

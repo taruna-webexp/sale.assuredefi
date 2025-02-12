@@ -8,7 +8,7 @@ import Image from "next/image";
 import { loginValidationSchema } from "@/components/share/validation/loginValidation";
 import AuthServices from "@/services/authService";
 import { useRouter } from "next/navigation";
-import { successMsg } from "@/components/toaster/msg";
+import { errorMsg, successMsg } from "@/components/toaster/msg";
 import Cookies from "js-cookie";
 export default function Login() {
   const router = useRouter();
@@ -29,11 +29,11 @@ export default function Login() {
     console.log("Submitted Data:", data);
     try {
       const res = await AuthServices.loginApi(data);
-      Cookies.set("accessToken", JSON.stringify(res.data.access_token), {
+      Cookies.set("accessToken", JSON.stringify(res.data[0].access_token), {
         expires: 7,
         sameSite: "Strict",
       });
-      Cookies.set("userDetail", JSON.stringify(res.data), {
+      Cookies.set("userDetail", JSON.stringify(res.data[0]), {
         expires: 7,
         sameSite: "Strict",
       });
@@ -42,7 +42,7 @@ export default function Login() {
 
       router.push("/");
     } catch (error) {
-      console.log("error", error);
+      errorMsg(error);
     }
   };
 

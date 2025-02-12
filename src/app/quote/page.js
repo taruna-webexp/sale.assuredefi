@@ -18,7 +18,6 @@ import {
 import Link from "next/link";
 
 export default function QuotePage() {
-  const [loginUser, setLoginUser] = useState("");
   const [projectList, setProjectList] = useState([]);
 
   useEffect(() => {
@@ -26,18 +25,6 @@ export default function QuotePage() {
     const allProjects =
       JSON.parse(localStorage.getItem("ListOfProjects")) || [];
     setProjectList(allProjects);
-  }, []);
-
-  useEffect(() => {
-    const user = Cookies.get("userDetail"); // Get the cookie value
-    if (user) {
-      try {
-        const parsedUser = JSON.parse(decodeURIComponent(user));
-        setLoginUser(parsedUser?.email);
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-      }
-    }
   }, []);
 
   return (
@@ -140,11 +127,6 @@ export default function QuotePage() {
         )}
 
         {/* Logged-in User Info */}
-        <Box className="flex justify-center mt-6">
-          <Typography variant="body2">
-            <strong>Logged in user:</strong> {loginUser || "Not logged in"}
-          </Typography>
-        </Box>
       </Container>
     </Box>
   );
