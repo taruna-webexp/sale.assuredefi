@@ -116,11 +116,7 @@ export default function Login() {
                 errors={errors}
                 type="password"
               />
-              <Typography variant="body2 !mt-4">
-                <a href="/auth/login" className="theme-color hover:underline">
-                  Forgot Password?
-                </a>
-              </Typography>
+
               <Button
                 type="submit"
                 variant="contained"
@@ -131,16 +127,6 @@ export default function Login() {
                 Log In
               </Button>
             </form>
-
-            {/* Footer */}
-            <Box mt={2} className="text-center">
-              <Typography variant="body2">
-                Don&apos;t have an account?{" "}
-                <a href="/auth/login" className="theme-color hover:underline">
-                  Sign Up
-                </a>
-              </Typography>
-            </Box>
           </Box>{" "}
         </Box>
       </Container>
