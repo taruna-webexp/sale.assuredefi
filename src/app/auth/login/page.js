@@ -61,10 +61,8 @@ export default function Login() {
             boxShadow: 3,
           }}
         >
-          <Image
-            src="/assets/logo-a.webp"
-            width={170}
-            height={80}
+          <img
+            src="https://cdn.prod.website-files.com/671146926ff340e4bb778835/67524d8d92d2860c7fa253e2_goldfooterimage.png.webp"
             alt="assuredefi-logo"
             className="!mb-6 h-12"
           />
