@@ -2,18 +2,25 @@
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Box, Typography, Container } from "@mui/material";
+import {
+  Button,
+  Box,
+  Typography,
+  Container,
+  CircularProgress,
+} from "@mui/material";
 import FormInput from "@/components/share/form/FormInput";
-import Image from "next/image";
 import { loginValidationSchema } from "@/components/share/validation/loginValidation";
 import AuthServices from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { errorMsg, successMsg } from "@/components/toaster/msg";
 import Cookies from "js-cookie";
+import { useState } from "react";
 export default function Login() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
-    register,
     control,
     handleSubmit,
     formState: { errors },
@@ -26,7 +33,8 @@ export default function Login() {
   });
 
   const onSubmit = async (data) => {
-    console.log("Submitted Data:", data);
+    setIsLoading(true);
+
     try {
       const res = await AuthServices.loginApi(data);
       Cookies.set("accessToken", JSON.stringify(res.data[0].access_token), {
@@ -43,6 +51,8 @@ export default function Login() {
       router.push("/");
     } catch (error) {
       errorMsg(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -50,7 +60,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center dark-purple-bg login-container ">
       <Container component="main" maxWidth="xs">
         <Box
-          className="gradient-bg-sharp-login mb-6"
+          className="gradient-bg-sharp-login mb-6 !px-0"
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -61,13 +71,16 @@ export default function Login() {
             boxShadow: 3,
           }}
         >
-          <img
-            src="https://cdn.prod.website-files.com/671146926ff340e4bb778835/67524d8d92d2860c7fa253e2_goldfooterimage.png.webp"
-            alt="assuredefi-logo"
-            className="!mb-6 h-12"
-          />
+          <div className="relative">
+            <img
+              src="https://cdn.prod.website-files.com/671146926ff340e4bb778835/67524d8d92d2860c7fa253e2_goldfooterimage.png.webp"
+              alt="assuredefi-logo"
+              className="!mb-6 h-14"
+            />
+            <p className="logo-text theme-color">Sales Portal</p>
+          </div>
           <Box
-            className="theme-border-light gradient-bg-sharp-login"
+            className="theme-border-light gradient-bg-sharp-login !px-5 !py-8"
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -122,7 +135,14 @@ export default function Login() {
                 fullWidth
                 sx={{ marginTop: 2 }}
               >
-                Log In
+                {isLoading ? (
+                  <CircularProgress
+                    className="theme-color !text-sm !w-5 !h-5"
+                    fontSize="small"
+                  />
+                ) : (
+                  "Log In"
+                )}
               </Button>
             </form>
           </Box>{" "}

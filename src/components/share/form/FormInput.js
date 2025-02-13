@@ -14,7 +14,8 @@ export default function FormInput({
 }) {
   return (
     <FormControl fullWidth className={className}>
-      <label className="text-black">{label}</label>
+      {label && <label className="mb-2">{label}</label>}
+
       <Controller
         name={name}
         defaultValue={defaultValue || ""}

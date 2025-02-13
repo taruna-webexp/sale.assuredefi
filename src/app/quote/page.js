@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import {
   Button,
   Box,
@@ -53,33 +52,37 @@ export default function QuotePage() {
         </Box>
 
         {/* All Saved Quotes */}
-        <Typography variant="h5" className="theme-color font-semibold mb-4">
+        <Typography variant="h5" className="theme-color font-semibold !mb-3">
           All Saved Quotes
         </Typography>
+
         {projectList.length > 0 ? (
-          <TableContainer component={Paper}>
-            <Table className="bg-gray-300">
+          <TableContainer
+            component={Paper}
+            className="!rounded-none bg-transparent"
+          >
+            <Table className="dark-purple-bg sales-table">
               <TableHead>
                 <TableRow>
-                  <TableCell>
+                  <TableCell className="!p-2 theme-color theme-border-light">
                     <strong>Project</strong>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="!p-2 theme-color theme-border-light">
                     <strong>Client</strong>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="!p-2 theme-color theme-border-light">
                     <strong>Notes</strong>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="!p-2 theme-color theme-border-light">
                     <strong>Product/Service</strong>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="!p-2 theme-color theme-border-light">
                     <strong>Amount</strong>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="!p-2 theme-color theme-border-light">
                     <strong>Date</strong>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="!p-2 theme-color theme-border-light">
                     <strong>Document</strong>
                   </TableCell>
                 </TableRow>
@@ -87,28 +90,34 @@ export default function QuotePage() {
               <TableBody>
                 {projectList.map((quote, index) => (
                   <TableRow key={index}>
-                    <TableCell>{quote.projectName}</TableCell>
-                    <TableCell>{quote.clientName}</TableCell>
-                    <TableCell>{quote.notes}</TableCell>
-                    <TableCell>
+                    <TableCell className="!p-2 !text-white theme-border-light !text-sm capitalize w-32">
+                      {quote.projectName}
+                    </TableCell>
+                    <TableCell className="!p-2 !text-white theme-border-light !text-sm capitalize w-40">
+                      {quote.clientName}
+                    </TableCell>
+                    <TableCell className="!p-2 !text-white theme-border-light w-60 !text-sm">
+                      {quote.notes}
+                    </TableCell>
+                    <TableCell className="!p-2 !text-white theme-border-light capitalize">
                       {quote.productServices.map((ps, i) => (
                         <Typography key={i}>
                           {ps.productService || "N/A"}
                         </Typography>
                       ))}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="!p-2 !text-white theme-border-light !text-sm">
                       {quote.productServices.map((ps, i) => (
                         <Typography key={i}>{ps.amount}</Typography>
                       ))}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="!p-2 !text-white theme-border-light !text-sm">
                       {new Date(quote.date).toLocaleDateString()}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="!p-2 !text-white theme-border-light w-28 !text-sm !text-center">
                       <Link href={quote.docUrl} target="_blank">
                         <Button
-                          className="button-color !text-white"
+                          className="button-color !text-white !px-2 !leading-5 "
                           size="small"
                         >
                           View Doc
@@ -125,8 +134,6 @@ export default function QuotePage() {
             No quotes saved yet.
           </Typography>
         )}
-
-        {/* Logged-in User Info */}
       </Container>
     </Box>
   );

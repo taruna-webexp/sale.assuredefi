@@ -55,6 +55,10 @@ body {
 .theme-border-light {
   border: 1px solid #dbcb4163 !important;
 }
+.theme-border {
+  border: 1px solid #e2d243 !important;
+}
+
 .form-login-input label {
   color: #fff;
 }
@@ -67,10 +71,33 @@ body {
   color: #fff;
 }
 
+.sales-table td p {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
 /* .form-login-input .MuiInputBase-root input {
   color: #fff;
 } */
 .quoteNotes textarea {
   resize: vertical !important;
   padding: 20px 0 20px 0;
+}
+.logo-text {
+  position: absolute;
+  bottom: 18px;
+  font-size: 10px;
+  left: 65px;
+  letter-spacing: 2px;
+  line-height: 21px;
+}
+
+.logo-text-header {
+  top: 32px;
+  position: absolute;
+
+  font-size: 10px;
+  left: 47px;
+  letter-spacing: 3px;
+  line-height: 22px;
 }

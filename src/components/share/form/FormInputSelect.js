@@ -13,7 +13,7 @@ const FormInputSelect = ({
 }) => {
   return (
     <FormControl fullWidth>
-      <label>{label}</label>
+      <label className="mb-2">{label}</label>
       <Controller
         name={name}
         // className={className}

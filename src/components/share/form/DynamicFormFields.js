@@ -21,9 +21,10 @@ const DynamicFormFields = ({ control, errors, className }) => {
   // Ensure at least one field is displayed by default
   React.useEffect(() => {
     if (fields.length === 0) {
-      append({ productService: "", number: "" });
+      append({ productService: "", amount: "" }, { shouldFocus: false });
     }
-  }, [fields, append]);
+  }, [fields.length, append]);
+
   const handleProductChange = () => {
     console.log("sdfgh");
   };
@@ -50,6 +51,7 @@ const DynamicFormFields = ({ control, errors, className }) => {
             <Grid item xs={12} md={6}>
               <FormInput
                 control={control}
+                label=""
                 defaultValue="0"
                 name={`productServices[${index}].amount`}
                 type="number"
@@ -60,7 +62,7 @@ const DynamicFormFields = ({ control, errors, className }) => {
             </Grid>
           </div>
         ))}
-        <Grid item xs={4} md={4}>
+        <Grid item xs={4} md={4} className="!ps-0">
           <Button
             variant="contained"
             className="button-color"

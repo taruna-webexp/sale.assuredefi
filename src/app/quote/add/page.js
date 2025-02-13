@@ -41,6 +41,7 @@ export default function AddQuote() {
     formState: { errors },
   } = useForm({
     defaultValues: {
+      productServices: [{ productService: "", amount: 0 }],
       currency: currencyOptions[0].value,
     },
   });
@@ -164,7 +165,7 @@ export default function AddQuote() {
                 >
                   {isLoading ? (
                     <CircularProgress
-                      className="theme-color !text-sm"
+                      className="theme-color !text-sm !w-5 !h-5"
                       fontSize="small"
                     />
                   ) : (
