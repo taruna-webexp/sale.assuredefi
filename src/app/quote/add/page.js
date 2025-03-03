@@ -40,6 +40,7 @@ export default function AddQuote({ title }) {
     watch,
     handleSubmit,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(addQuoteSchema),
@@ -53,10 +54,11 @@ export default function AddQuote({ title }) {
   const selectedCurrency = watch("currency", "USD");
 
   // Calculate total
-  const total = productServicesFiled.reduce(
-    (sum, item) => sum + (Number(item.amount) * item.qty || 0),
-    0
-  );
+  const total = productServicesFiled
+    .reduce((sum, item) => sum + (Number(item.amount) * item.qty || 0), 0)
+    .toFixed(2);
+
+  console.log(total); // Output: "123.45" (as a string)
 
   //submit handler
   const onSubmit = async (data) => {
@@ -174,6 +176,8 @@ export default function AddQuote({ title }) {
               <DynamicFormFields
                 control={control}
                 errors={errors}
+                clearErrors={clearErrors}
+                setValue={setValue}
                 className="form-login-input"
               />
             </Grid>
