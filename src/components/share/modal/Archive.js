@@ -1,0 +1,50 @@
+import React from "react";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
+export default function ConfirmationModal({
+  onConfirm,
+  isOpen,
+  confirmMessage,
+  confirmTitle,
+  onClose,
+}) {
+  return (
+    <>
+      <Dialog open={isOpen} onClose={onClose}>
+        <div className="dark-purple-bg theme-border-light pb-3">
+          <DialogTitle className="text-center theme-color">
+            {confirmTitle}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText className="!text-white">
+              {confirmMessage}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions className="!justify-center">
+            <Button
+              onClick={onClose}
+              color="primary"
+              className="theme-color-bg !text-black !normal-case"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={onConfirm}
+              autoFocus
+              className="!bg-red-900 !text-white !normal-case"
+            >
+              Archive
+            </Button>
+          </DialogActions>
+        </div>
+      </Dialog>
+    </>
+  );
+}

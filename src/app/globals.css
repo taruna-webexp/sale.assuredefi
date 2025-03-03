@@ -70,10 +70,15 @@ body {
   border: 1px solid #3b3b3b !important;
   color: #fff;
 }
-
+.filter-outer .filter-input .select-project:hover fieldset {
+  border: none !important;
+}
 .sales-table td p {
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+.amount-outer span {
+  width: 25px;
 }
 
 /* .form-login-input .MuiInputBase-root input {
@@ -95,9 +100,218 @@ body {
 .logo-text-header {
   top: 32px;
   position: absolute;
-
   font-size: 10px;
   left: 47px;
   letter-spacing: 3px;
   line-height: 22px;
+}
+.project-outer .MuiAccordion-gutters {
+  background: #0a0724 !important;
+  color: white;
+  border: 1px solid #dbcb4163 !important;
+  margin-top: -1px;
+  contain-intrinsic-block-size: AUTO 100px;
+}
+.project-outer .MuiAccordion-gutters svg {
+  color: white;
+}
+.project-outer {
+  background: #0a0724 !important;
+}
+.quote-outer thead th:last-child {
+  width: 215px;
+}
+.filter-outer {
+  justify-content: space-between;
+  align-items: center;
+  margin: 46px 0 16px;
+}
+.filter-input svg,
+.form-login-input svg {
+  color: white;
+}
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.filter-item label.mb-2 {
+  margin: 0;
+}
+.filter-outer .filter-item input {
+  padding: 10px 14px;
+}
+.filter-outer .filter-input #projects {
+  padding: 10px 34px 10px 14px;
+}
+.select-currency fieldset {
+  border: none;
+}
+.sales-textarea textarea {
+  padding: 0 0 20px;
+}
+.form-login-input label.MuiFormLabel-filled,
+.form-login-input label.Mui-focused {
+  background: #0a0724;
+  padding: 0 8px;
+  left: -2px;
+}
+.line-item-collunm .item-button {
+  padding-bottom: 10px;
+  padding-top: 5px !important;
+}
+.sales-save-button button,
+.sales-save-button a {
+  margin-top: 0;
+}
+.generate-quote .sales-save-button {
+  max-width: 100%;
+  flex-basis: 100%;
+}
+.sales-save-button button {
+  width: auto;
+}
+.main-sale {
+  position: relative;
+}
+.main-sale:before {
+  content: "";
+  width: 1px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  background: #5b532f;
+  z-index: 9;
+}
+/* .remove-filed {
+  margin-top: -15px !important;
+} */
+.line-item-lable {
+  margin-top: 7px;
+  display: block;
+  /* visibility: hidden; */
+}
+
+.remove-filed {
+  position: absolute;
+  right: 12px;
+  top: 42%;
+}
+.add-qty-fields-space {
+  padding-right: 28px !important;
+}
+
+/* .error-msgs {
+  position: absolute;
+  left: 0;
+  bottom: -20px;
+  color: #d32f2f;
+  font-size: 12px;
+} */
+.MuiFormHelperText-root {
+  margin: 3px !important;
+}
+@media (max-width: 950px) {
+  .document-button button {
+    min-width: auto;
+  }
+  .quote-outer thead th:last-child {
+    width: 108px;
+    max-width: 108px;
+  }
+  .document-button div.flex {
+    justify-content: center;
+  }
+  .sales-table table.quote-outer {
+    min-width: 700px;
+    table-layout: auto;
+  }
+  .sales-table {
+    overflow-y: auto;
+    position: relative;
+  }
+  .quote-outer tbody td:last-child {
+    max-width: 108px;
+    width: 108px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .filter-outer h5 {
+    width: 100%;
+    text-align: center;
+  }
+  .filter-outer {
+    flex-wrap: wrap;
+  }
+  .filter-outer .filter-item {
+    width: 100%;
+  }
+  .filter-outer .filter-item .filter-input {
+    width: 50%;
+  }
+  .document-button button {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .sales-table table thead th {
+    padding: 4px 4px !important;
+    line-height: 17px;
+  }
+  .sales-table table tbody td {
+    padding: 4px 4px !important;
+  }
+  .document-button button svg {
+    font-size: 16px;
+  }
+  .quote-outer thead th:last-child {
+    width: 90px;
+  }
+  .sales-header {
+    flex-wrap: wrap;
+  }
+  .header-left {
+    width: 100%;
+    justify-content: center;
+    margin: 0 0 12px 0;
+  }
+  .header-right {
+    width: 100%;
+    justify-content: center;
+    margin: 0 0 12px;
+  }
+  .sales-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .sales-container .sales-outer {
+    margin-top: 20px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+  }
+  .generate-quote {
+    padding: 16px;
+  }
+  .generate-quote .generate-quote-form {
+    margin-top: 25px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+  }
+  .line-item-collunm .item-button {
+    max-width: 100%;
+    flex-basis: 100%;
+  }
+  .line-item-collunm .item-row {
+    flex-wrap: wrap;
+  }
+
+  .quote-outer tbody td:last-child {
+    max-width: 90px;
+    width: 90px !important;
+  }
+  .add-item-collunm {
+    flex-wrap: wrap;
+  }
 }

@@ -6,7 +6,7 @@ import Header from "@/components/common/Header";
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
-  adjustFontFallback: false, // Prevents browser fallback causing layout shifts
+  adjustFontFallback: false,
 });
 export default function RootLayout({ children }) {
   return (

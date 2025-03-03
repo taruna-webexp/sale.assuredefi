@@ -10,48 +10,39 @@ import {
   CircularProgress,
 } from "@mui/material";
 import FormInput from "@/components/share/form/FormInput";
-import { loginValidationSchema } from "@/components/share/validation/loginValidation";
-import AuthServices from "@/services/authService";
-import { useRouter } from "next/navigation";
 import { errorMsg, successMsg } from "@/components/toaster/msg";
-import Cookies from "js-cookie";
-import { useState } from "react";
 import Link from "next/link";
-export default function Login() {
-  const router = useRouter();
+import AuthServices from "@/services/authService";
+import { resetPasswordValidationSchema } from "@/components/share/validation/loginValidation";
+import { useState } from "react";
+export default function ResetPassword() {
   const [isLoading, setIsLoading] = useState(false);
 
   const {
     control,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(loginValidationSchema),
+    resolver: yupResolver(resetPasswordValidationSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  /// login handler
+  /// submit handler
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      const res = await AuthServices.loginApi(data);
+      const res = await AuthServices.resetPasswordApi(data);
       if (res.status == true) {
-        Cookies.set("accessToken", JSON.stringify(res.data[0].access_token), {
-          expires: 7,
-          sameSite: "Strict",
-        });
-        Cookies.set("userDetail", JSON.stringify(res.data[0]), {
-          expires: 7,
-          sameSite: "Strict",
-        });
         successMsg(res.message);
-        router.push("/quote");
+        reset();
+        router.push("/auth/login");
       }
     } catch (error) {
       errorMsg(error);
+      console.log("Error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -100,9 +91,8 @@ export default function Login() {
               gutterBottom
               className="theme-color"
             >
-              Log In
+              Forgot Password
             </Typography>
-
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="form-login gap-2"
@@ -112,32 +102,21 @@ export default function Login() {
                 control={control}
                 name="email"
                 type="email"
-                placeholder=""
+                placeholder="Enter your email address"
                 errors={errors}
                 className="form-login-input !mt-6 !mb-4"
                 label="Email"
                 variant="outlined"
               />
-
-              {/* Password Field */}
-              <FormInput
-                className="form-login-input !mb-4"
-                label="Password"
-                name="password"
-                variant="outlined"
-                control={control}
-                placeholder=""
-                errors={errors}
-                type="password"
-              />
               <Typography variant="body2 !mt-4">
-                <a
-                  href="/auth/resetpassword"
+                <Link
+                  href="/auth/login"
                   className="theme-color hover:underline"
                 >
-                  Forgot your password?
-                </a>
+                  Back to login
+                </Link>
               </Typography>
+              {/* Password Field */}
               <Button
                 type="submit"
                 variant="contained"
@@ -151,11 +130,11 @@ export default function Login() {
                     fontSize="small"
                   />
                 ) : (
-                  "Log In"
+                  "Continue"
                 )}
               </Button>
             </form>
-          </Box>{" "}
+          </Box>
         </Box>
       </Container>
     </div>

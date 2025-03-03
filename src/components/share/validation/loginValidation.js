@@ -14,3 +14,7 @@ export const loginValidationSchema = yup.object().shape({
     )
     .required("Password is required"),
 });
+
+export const resetPasswordValidationSchema = yup.object().shape({
+  email: yup.string().email("Invalid email").required("Email is required"),
+});

@@ -7,7 +7,7 @@ const FormInputSelectAutoComplete = ({
   control,
   label,
   options,
-  errors = {},
+  errors,
   handleChange,
   className,
 }) => {
@@ -19,20 +19,20 @@ const FormInputSelectAutoComplete = ({
         render={({ field }) => (
           <Autocomplete
             {...field}
-            options={options} // Ensure options are passed correctly
-            getOptionLabel={(option) => (option.name ? option.name : "")} // Fix getOptionLabel
-            value={options.find((opt) => opt.name === field.value) || null} // Fix value mapping
+            options={options}
+            getOptionLabel={(option) => (option.name ? option.name : "")}
+            value={options.find((opt) => opt.name === field.value) || null}
             onChange={(_, value) => {
               handleChange(value);
-              field.onChange(value ? value.name : ""); // Ensure value update
+              field.onChange(value ? value.name : "");
             }}
             renderInput={(params) => (
               <TextField
                 {...params}
                 className={className}
                 label={label}
-                error={!!errors[name]}
-                helperText={errors[name]?.message}
+                error={!!errors}
+                helperText={errors?.message}
               />
             )}
           />

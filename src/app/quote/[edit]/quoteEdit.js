@@ -18,15 +18,17 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-export default function AddQuote({ title }) {
+export default function EditQuotes({ quoteId }) {
   const [isLoading, setIsLoading] = useState(false);
   const [projects, setProjects] = useState([]);
-  const router = useRouter();
   const [selectedProject, setSelectedProject] = useState(null);
+  const pathName = usePathname();
+  const router = useRouter();
 
+  console.log("quoteId", quoteId);
   const currencyOptions = [
     { label: "USD", value: "USD" },
     { label: "ETH", value: "ETH" },
@@ -40,28 +42,50 @@ export default function AddQuote({ title }) {
     watch,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(addQuoteSchema),
     defaultValues: {
-      productServices: [{ productService: "", amount: "", qty: 1 }],
+      productServices: [{ productService: "", amount: 0 }],
       currency: currencyOptions[0].value,
     },
   });
+
+  //get quote by id
+  const getQuoteById = async () => {
+    try {
+      const result = await QuoteServices.getQuoteById(quoteId);
+      if (result.status === true) {
+        let data = result.data;
+        if (typeof data.productServices === "string") {
+          data = { ...data, productServices: JSON.parse(data.productServices) };
+        }
+        setSelectedProject(data.projectName || "");
+        reset({ ...data, projectName: data.projectName || "" });
+      }
+    } catch (error) {
+      errorMsg(error);
+      router.push("/");
+    }
+  };
+
   const productServicesFiled =
     useWatch({ control, name: "productServices" }) || [];
   const selectedCurrency = watch("currency", "USD");
 
   // Calculate total
-  const total = productServicesFiled.reduce(
-    (sum, item) => sum + (Number(item.amount) * item.qty || 0),
-    0
-  );
+  const total = Array.isArray(productServicesFiled)
+    ? productServicesFiled.reduce(
+        (sum, item) => sum + (Number(item.amount) || 0),
+        0
+      )
+    : 0;
 
-  //submit handler
+  /// update quote
   const onSubmit = async (data) => {
     setIsLoading(true);
-    const formattedData = { ...data, total, date: new Date().toISOString() };
+    const formattedData = { ...data, date: new Date().toISOString() };
     try {
       const response = await createGoogleDoc(formattedData);
       if (response.status === "success" && response.documentId) {
@@ -71,8 +95,10 @@ export default function AddQuote({ title }) {
           docUrl: googleDocUrl,
           templateId: response.documentId,
         };
-        const res = await QuoteServices.addQutote(formattedUpdatedData);
-        console.log("res", res);
+        const res = await QuoteServices.addQuoteArchive(
+          quoteId,
+          formattedUpdatedData
+        );
         if (res.status == true) {
           successMsg(res.message);
           router.push("/");
@@ -80,7 +106,8 @@ export default function AddQuote({ title }) {
       }
     } catch (error) {
       console.log("error", error);
-      // errorMsg(error);
+
+      errorMsg(error);
       console.log(error);
     } finally {
       setIsLoading(false);
@@ -108,12 +135,16 @@ export default function AddQuote({ title }) {
 
   useEffect(() => {
     getProjecProjects();
+
+    getQuoteById(); // get quote by id
   }, []);
+
+  console.log("projects", projects);
 
   return (
     <div className=" items-center justify-center min-h-screen  dark-purple-bg py-6 px-6 generate-quote">
       <h1 className="text-3xl text-bold theme-color text-center pt-6">
-        {title ? title : " Generate New Quote"}
+        {" Edit  Quote"}
       </h1>
       <Container className=" p-8 rounded-lg shadow-md !max-w-3xl mt-12 theme-border-light generate-quote-form">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
