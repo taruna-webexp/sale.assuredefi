@@ -25,10 +25,8 @@ export default function EditQuotes({ quoteId }) {
   const [isLoading, setIsLoading] = useState(false);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
-  const pathName = usePathname();
   const router = useRouter();
 
-  console.log("quoteId", quoteId);
   const currencyOptions = [
     { label: "USD", value: "USD" },
     { label: "ETH", value: "ETH" },
@@ -42,6 +40,7 @@ export default function EditQuotes({ quoteId }) {
     watch,
     handleSubmit,
     setValue,
+    clearErrors,
     reset,
     formState: { errors },
   } = useForm({
@@ -58,6 +57,7 @@ export default function EditQuotes({ quoteId }) {
       const result = await QuoteServices.getQuoteById(quoteId);
       if (result.status === true) {
         let data = result.data;
+
         if (typeof data.productServices === "string") {
           data = { ...data, productServices: JSON.parse(data.productServices) };
         }
@@ -75,12 +75,9 @@ export default function EditQuotes({ quoteId }) {
   const selectedCurrency = watch("currency", "USD");
 
   // Calculate total
-  const total = Array.isArray(productServicesFiled)
-    ? productServicesFiled.reduce(
-        (sum, item) => sum + (Number(item.amount) || 0),
-        0
-      )
-    : 0;
+  const total = productServicesFiled
+    .reduce((sum, item) => sum + (Number(item.amount) * item.qty || 0), 0)
+    .toFixed(2);
 
   /// update quote
   const onSubmit = async (data) => {
@@ -105,10 +102,7 @@ export default function EditQuotes({ quoteId }) {
         }
       }
     } catch (error) {
-      console.log("error", error);
-
       errorMsg(error);
-      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -138,8 +132,6 @@ export default function EditQuotes({ quoteId }) {
 
     getQuoteById(); // get quote by id
   }, []);
-
-  console.log("projects", projects);
 
   return (
     <div className=" items-center justify-center min-h-screen  dark-purple-bg py-6 px-6 generate-quote">
@@ -205,6 +197,8 @@ export default function EditQuotes({ quoteId }) {
               <DynamicFormFields
                 control={control}
                 errors={errors}
+                clearErrors={clearErrors}
+                setValue={setValue}
                 className="form-login-input"
               />
             </Grid>
@@ -226,14 +220,7 @@ export default function EditQuotes({ quoteId }) {
                 {selectedCurrency}
               </Typography>
             </Grid>
-            <Grid
-              item
-              xs={5}
-              md={5}
-              lg={5}
-              className="pt-px sales-save-button
-"
-            >
+            <Grid item xs={5} md={5} lg={5} className="pt-px sales-save-button">
               <div className="flex gap-2 ">
                 <Button
                   type="submit"
