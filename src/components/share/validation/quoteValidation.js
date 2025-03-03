@@ -1,26 +1,23 @@
-import * as yup from "yup";
+import * as Yup from "yup";
 
-export const addQuoteSchema = yup.object().shape({
-  clientName: yup.string().required("Client name is required"),
-  projectName: yup.string().required("Project name is required"),
-  productServices: yup
-    .array()
-    .of(
-      yup.object().shape({
-        productService: yup
-          .string()
-          .required("Product/Service name is required"),
-        amount: yup
-          .string("This field is required")
-          .typeError("Amount must be a number")
-          .required("Amount is required"),
-        qty: yup
-          .number()
-          .typeError("Quantity must be a number")
-          .positive("Quantity must be greater than zero")
-          .integer("Quantity must be a whole number")
-          .required("Quantity is required"),
-      })
-    )
-    .min(1, "At least one product/service is required"),
+export const addQuoteSchema = Yup.object().shape({
+  clientName: Yup.string().required("Client name is required"),
+  projectName: Yup.string().required("Project name is required"),
+  productServices: Yup.array().of(
+    Yup.object().shape({
+      productService: Yup.string().required("Product/service is required"),
+      amount: Yup.number()
+        .typeError("Amount must be a number")
+        .positive("Amount must be greater than zero"),
+      qty: Yup.number()
+        .typeError("Quantity must be a number")
+        .positive("Quantity must be greater than zero")
+        .integer("Quantity must be a whole number"),
+    })
+  ),
+  // .test(
+  //   "productServices-required",
+  //   "At least one product/service is required",
+  //   (value) => value.length > 0
+  // ),
 });

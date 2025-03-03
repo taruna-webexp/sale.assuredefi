@@ -8,13 +8,17 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
+import { Unarchive } from "@mui/icons-material";
 export default function ConfirmationModal({
   onConfirm,
   isOpen,
   confirmMessage,
   confirmTitle,
+  archive,
   onClose,
 }) {
+  console.log("abc", archive);
+
   return (
     <>
       <Dialog open={isOpen} onClose={onClose}>
@@ -40,7 +44,7 @@ export default function ConfirmationModal({
               autoFocus
               className="!bg-red-900 !text-white !normal-case"
             >
-              Archive
+              {archive == 1 ? "Archive" : "Unarchive"}
             </Button>
           </DialogActions>
         </div>

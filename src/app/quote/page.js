@@ -22,8 +22,11 @@ import moment from "moment";
 import FormInputSelectWithHandler from "@/components/share/form/FormInputSelectWithHandler";
 import { useForm } from "react-hook-form";
 import FormInput from "@/components/share/form/FormInput";
-import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined";
+import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import { errorMsg, successMsg } from "@/components/toaster/msg";
+import ArchiveIcon from "@mui/icons-material/Archive";
+import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined";
+import UnarchiveOutlinedIcon from "@mui/icons-material/UnarchiveOutlined";
 import QuoteModal from "@/components/share/modal/Quote";
 import ConfirmationModal from "@/components/share/modal/Archive";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
@@ -31,7 +34,7 @@ import Image from "next/image";
 export default function QuotePage() {
   const [projects, setProjects] = useState([]);
   const [latestQuotes, setLatestQuotes] = useState([]);
-  const [quoteModalOpen, setQuoteModalOpen] = useState(false);
+  const [archive, setArchive] = useState();
   const [archiveConModal, setArchiveConModal] = useState(false);
   const [quoteId, setQuoteId] = useState("");
 
@@ -173,7 +176,7 @@ export default function QuotePage() {
   const archiveConfirmationHandler = async () => {
     try {
       const data = {
-        archieve: 1,
+        archive,
       };
       const response = await QuoteServices.addQuoteArchive(quoteId, data);
       if (response.status == true) {
@@ -188,8 +191,9 @@ export default function QuotePage() {
     }
   };
 
-  const archiveConfOpenHandler = (id) => {
-    console.log("id", id);
+  const archiveConfOpenHandler = (id, isArchive) => {
+    setArchive(isArchive);
+    console.log("isArchive", isArchive);
     setArchiveConModal(true);
     setQuoteId(id);
   };
@@ -387,14 +391,27 @@ export default function QuotePage() {
                                 <FileDownloadOutlinedIcon />
                               </Button>
                             </Link>
-
-                            <Button
-                              onClick={() => archiveConfOpenHandler(quote.id)}
-                              className="button-color !text-white !px-2 !leading-5"
-                              size="small"
-                            >
-                              <ArchiveOutlinedIcon />
-                            </Button>
+                            {quote.archieve === false ? (
+                              <Button
+                                onClick={() =>
+                                  archiveConfOpenHandler(quote.id, 1)
+                                }
+                                className="button-color !text-white !px-2 !leading-5"
+                                size="small"
+                              >
+                                <ArchiveOutlinedIcon />{" "}
+                              </Button>
+                            ) : (
+                              <Button
+                                onClick={() =>
+                                  archiveConfOpenHandler(quote.id, 0)
+                                }
+                                className="button-color !text-white !px-2 !leading-5"
+                                size="small"
+                              >
+                                <UnarchiveOutlinedIcon />
+                              </Button>
+                            )}
 
                             <Link href={`/quote/${quote.id}`}>
                               <Button
@@ -424,9 +441,16 @@ export default function QuotePage() {
       {/* /// archive confirmation modal */}
       <ConfirmationModal
         onConfirm={archiveConfirmationHandler}
-        confirmMessage="Are you sure you want to archive this quote?"
-        confirmTitle="Archive Confirmation"
+        confirmMessage={
+          archive === 1
+            ? "Are you sure you want to archive this quote?"
+            : "Are you sure you want to unarchive this quote?"
+        }
+        confirmTitle={
+          archive === 1 ? "Archive Confirmation" : "Unarchive Confirmation"
+        }
         isOpen={archiveConModal}
+        archive={archive}
         onClose={archiveConfCloseHandler}
       />
     </Box>
