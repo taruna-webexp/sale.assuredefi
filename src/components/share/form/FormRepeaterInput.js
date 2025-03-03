@@ -1,10 +1,9 @@
 import { FormControl, TextField } from "@mui/material";
 import { Controller } from "react-hook-form";
-
 export default function FormInput({
   name,
   control,
-  errors,
+  errors = {},
   label,
   type,
   multiline,
@@ -12,7 +11,19 @@ export default function FormInput({
   placeholder,
   defaultValue,
 }) {
-  console.log("error", errors);
+  // nested error
+  const getNestedError = (errorObj, path) => {
+    return path.split(".").reduce((acc, key) => {
+      if (key.includes("[") && key.includes("]")) {
+        const [arrayKey, index] = key.split(/\[|\]/).filter(Boolean);
+        return acc?.[arrayKey]?.[parseInt(index, 10)];
+      }
+      return acc?.[key];
+    }, errorObj);
+  };
+
+  const fieldError = getNestedError(errors, name);
+
   return (
     <FormControl fullWidth className={className}>
       {label && <label className="mb-2">{label}</label>}
@@ -29,8 +40,8 @@ export default function FormInput({
             placeholder={placeholder}
             type={type}
             multiline={multiline}
-            error={!!errors?.[name]}
-            helperText={errors?.[name]?.message}
+            error={!!fieldError}
+            helperText={fieldError?.message}
             variant="outlined"
             inputProps={type === "number" ? { min: 0 } : {}}
           />

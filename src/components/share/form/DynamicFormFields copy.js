@@ -5,7 +5,6 @@ import FormInput from "./FormInput";
 import FormInputSelectAutoComplete from "./FormInputSelectAutoComplete";
 import { quoteServices } from "@/utils/static";
 import { DeleteOutline } from "@mui/icons-material";
-import FormRepeaterInput from "./FormRepeaterInput";
 
 const DynamicFormFields = ({ control, errors, className }) => {
   const { fields, append, remove } = useFieldArray({
@@ -13,28 +12,9 @@ const DynamicFormFields = ({ control, errors, className }) => {
     name: "productServices",
   });
 
-  {
-    fields.map((field, index) => {
-      console.log(
-        "Errors for amount:",
-        errors?.productServices?.[index]?.amount
-      );
-
-      return (
-        <FormInput
-          control={control}
-          label="Price/Cost"
-          defaultValue=""
-          name={`productServices[${index}].amount`}
-          type="text"
-          errors={errors?.productServices?.[index]?.amount ?? {}}
-          className="form-login-input"
-          variant="outlined"
-        />
-      );
-    });
-  }
+  // Display one line item by default if none exists
   const isFirstRender = React.useRef(true);
+
   React.useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -70,14 +50,21 @@ const DynamicFormFields = ({ control, errors, className }) => {
                   options={quoteServices}
                   className="capitalize form-login-input"
                   handleChange={handleProductChange}
-                  errors={errors?.productServices?.[index]?.productService}
+                  errors={errors?.productServices?.[index]}
                 />
+
+                {errors && (
+                  <span className="error-msgs">
+                    {errors.productServices?.[index]?.productService?.message}
+                  </span>
+                )}
               </Grid>
 
+              {/* Text Input */}
               <Grid item xs={12} md={3} className="relative">
-                <FormRepeaterInput
+                <FormInput
                   control={control}
-                  label="Price/Cost"
+                  label="Price"
                   defaultValue=""
                   name={`productServices[${index}].amount`}
                   type="text"
@@ -85,9 +72,15 @@ const DynamicFormFields = ({ control, errors, className }) => {
                   className="form-login-input"
                   variant="outlined"
                 />
+
+                {errors && (
+                  <span className="error-msgs">
+                    {errors.productServices?.[index]?.amount?.message}
+                  </span>
+                )}
               </Grid>
               <Grid item xs={12} md={3} className="relative">
-                <FormRepeaterInput
+                <FormInput
                   control={control}
                   label="QTY"
                   defaultValue="1"
@@ -101,6 +94,12 @@ const DynamicFormFields = ({ control, errors, className }) => {
                       : " form-login-input add-qty-fields-space"
                   }
                 />
+
+                {errors && (
+                  <span className="error-msgs" style={{ color: "red" }}>
+                    {errors.productServices?.[index]?.qty?.message}
+                  </span>
+                )}
               </Grid>
             </div>
 

@@ -12,7 +12,7 @@ export const createGoogleDoc = async (data) => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const responseData = await response.json(); // Rename 'data' to 'responseData'
+    const responseData = await response.json();
     console.log("Google Doc Created:", responseData);
     return responseData;
   } catch (error) {

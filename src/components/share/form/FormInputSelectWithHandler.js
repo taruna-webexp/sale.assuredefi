@@ -1,8 +1,8 @@
 import React from "react";
-import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { FormControl, Select, MenuItem } from "@mui/material";
 import { Controller } from "react-hook-form";
 
-const FormInputSelect = ({
+const FormInputSelectWithHandler = ({
   name,
   control,
   label,
@@ -10,13 +10,13 @@ const FormInputSelect = ({
   errors,
   className,
   defaultValue,
+  onChange,
 }) => {
   return (
     <FormControl fullWidth>
       <label className="mb-2">{label}</label>
       <Controller
         name={name}
-        className={className}
         control={control}
         defaultValue={defaultValue || ""}
         render={({ field }) => (
@@ -25,6 +25,10 @@ const FormInputSelect = ({
             {...field}
             error={!!errors?.[name]}
             className={className}
+            onChange={(e) => {
+              field.onChange(e);
+              onChange?.(e.target.value);
+            }}
           >
             {options?.map((option) => (
               <MenuItem
@@ -46,4 +50,4 @@ const FormInputSelect = ({
   );
 };
 
-export default FormInputSelect;
+export default FormInputSelectWithHandler;
