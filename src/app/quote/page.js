@@ -33,6 +33,7 @@ import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import Image from "next/image";
 export default function QuotePage() {
   const [projects, setProjects] = useState([]);
+  const [selectProjects, setSelectProjects] = useState([]);
   const [latestQuotes, setLatestQuotes] = useState([]);
   const [archive, setArchive] = useState();
   const [archiveConModal, setArchiveConModal] = useState(false);
@@ -97,6 +98,7 @@ export default function QuotePage() {
 
   // get all quotes base on project and archive id
   const filterProjectHandler = async (selectedProject) => {
+    setSelectProjects(selectedProject);
     try {
       if (selectedProject === "0") {
         const response = await QuoteServices.getAllArchive();
@@ -164,24 +166,20 @@ export default function QuotePage() {
     fetchSearchResults();
   }, [searchQuoteValue]);
 
-  /// Quaote Edit Modal
-  // const QuoteOpenModalHandler = () => {
-  //   setQuoteModalOpen(true);
-  // };
-  // const QuoteCloseModalHandler = () => {
-  //   setQuoteModalOpen(false);
-  // };
-
   // Archive confirmation handler
   const archiveConfirmationHandler = async () => {
     try {
       const data = {
-        archive,
+        archieve: archive,
       };
       const response = await QuoteServices.addQuoteArchive(quoteId, data);
       if (response.status == true) {
-        successMsg("Quote successfully added to archive.");
-        fetchAllQuotes();
+        successMsg(response.message);
+        if (archive === 1) {
+          fetchAllQuotes();
+        } else {
+          filterProjectHandler(selectProjects);
+        }
       }
     } catch (error) {
       errorMsg(error.message);
@@ -193,7 +191,7 @@ export default function QuotePage() {
 
   const archiveConfOpenHandler = (id, isArchive) => {
     setArchive(isArchive);
-    console.log("isArchive", isArchive);
+
     setArchiveConModal(true);
     setQuoteId(id);
   };
@@ -202,7 +200,6 @@ export default function QuotePage() {
     setArchiveConModal(false);
   };
 
-  console.log("latestQuotes11111", process.env.NEXT_PUBLIC_GOOGLE_DOC_BASE_URL);
   return (
     <Box className="flex items-center justify-center dark-purple-bg px-6 mb-3.5 sales-container">
       <Container className="p-8 rounded-lg shadow-md !max-w-full mt-12 theme-border-light sales-outer">
@@ -302,7 +299,7 @@ export default function QuotePage() {
                         <TableCell className="!p-2 !text-white theme-border-light !text-sm capitalize">
                           {quote.clientName}
                         </TableCell>
-                        <TableCell className="!p-2 !text-white theme-border-light !text-sm capitalize">
+                        <TableCell className="!p-2 !text-white theme-border-light !text-sm ">
                           {quote.userName}
                         </TableCell>
                         <TableCell className="!p-2 !text-white theme-border-light !text-sm capitalize">
