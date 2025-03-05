@@ -6,7 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import AddQuote from "@/app/quote/add/page";
-import EditQuote from "@/app/quote/[edit]/quoteEdit";
+import EditQuotes from "@/app/quote/[edit]/quoteEdit";
 
 export default function QuoteModal({ open, close }) {
   return (
@@ -18,7 +18,7 @@ export default function QuoteModal({ open, close }) {
         aria-describedby="alert-dialog-description"
       >
         <DialogContent style={{ padding: "0" }}>
-          <EditQuote title="Edit Quote" />
+          <EditQuotes title="Edit Quote" />
         </DialogContent>
         <DialogActions>
           <Button onClick={close}>Disagree</Button>

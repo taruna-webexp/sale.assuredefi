@@ -14,11 +14,14 @@ import {
   TableHead,
   TableRow,
   Link,
+  Autocomplete,
+  TextField,
 } from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import QuoteServices from "@/services/quoteService";
 import moment from "moment";
+import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import FormInputSelectWithHandler from "@/components/share/form/FormInputSelectWithHandler";
 import { useForm } from "react-hook-form";
 import FormInput from "@/components/share/form/FormInput";
@@ -31,26 +34,58 @@ import QuoteModal from "@/components/share/modal/Quote";
 import ConfirmationModal from "@/components/share/modal/Archive";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import Image from "next/image";
+import FormInputSelectAutoComplete from "@/components/share/form/FormInputSelectAutoComplete";
+import Tooltip from "@mui/material/Tooltip";
+
 export default function QuotePage() {
   const [projects, setProjects] = useState([]);
-  const [selectProjects, setSelectProjects] = useState([]);
   const [latestQuotes, setLatestQuotes] = useState([]);
   const [archive, setArchive] = useState();
   const [archiveConModal, setArchiveConModal] = useState(false);
   const [quoteId, setQuoteId] = useState("");
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectProjects, setSelectProjects] = useState("");
 
   const {
     control,
     watch,
     setValue,
+    register,
     formState: { errors },
   } = useForm();
 
   // Fetch projects
+  // useEffect(() => {
+  //   const fetchProjects = async () => {
+  //     try {
+  //       const response = await QuoteServices.getproject();
+  //       if (response.status && response.data) {
+  //         const formattedProjects = response.data.map((project) => ({
+  //           ...project,
+  //           label: project.name,
+  //           value: project.id,
+  //         }));
+
+  //         const projectWithStaticOption = [
+  //           { label: "All Active", value: "all-projects" },
+  //           { label: "All Archive", value: "0" },
+  //           ...formattedProjects,
+  //         ];
+  //         setProjects(projectWithStaticOption);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching projects:", error);
+  //     }
+  //   };
+
+  //   fetchProjects();
+  // }, []);
+
   useEffect(() => {
-    const fetchProjects = async () => {
+    const searchchProjects = async () => {
       try {
         const response = await QuoteServices.getproject();
+
         if (response.status && response.data) {
           const formattedProjects = response.data.map((project) => ({
             ...project,
@@ -70,7 +105,7 @@ export default function QuotePage() {
       }
     };
 
-    fetchProjects();
+    searchchProjects();
   }, []);
 
   //get all quotes
@@ -166,6 +201,14 @@ export default function QuotePage() {
     fetchSearchResults();
   }, [searchQuoteValue]);
 
+  /// Quaote Edit Modal
+  // const QuoteOpenModalHandler = () => {
+  //   setQuoteModalOpen(true);
+  // };
+  // const QuoteCloseModalHandler = () => {
+  //   setQuoteModalOpen(false);
+  // };
+
   // Archive confirmation handler
   const archiveConfirmationHandler = async () => {
     try {
@@ -174,7 +217,7 @@ export default function QuotePage() {
       };
       const response = await QuoteServices.addQuoteArchive(quoteId, data);
       if (response.status == true) {
-        successMsg(response.message);
+        successMsg("Quote successfully added to archive.");
         if (archive === 1) {
           fetchAllQuotes();
         } else {
@@ -191,7 +234,6 @@ export default function QuotePage() {
 
   const archiveConfOpenHandler = (id, isArchive) => {
     setArchive(isArchive);
-
     setArchiveConModal(true);
     setQuoteId(id);
   };
@@ -246,6 +288,30 @@ export default function QuotePage() {
                 defaultValue="all-projects"
                 onChange={filterProjectHandler}
               />
+
+              {/* <Autocomplete
+                className="form-login-input"
+                freeSolo
+                options={projects.map((project) => project.label)}
+                value={selectedProject}
+                onChange={(event, newValue) => {
+                  setSelectedProject(newValue);
+                  setValue("projectName", newValue, { shouldValidate: true });
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Project Name"
+                    variant="outlined"
+                    placeholder="Search or type to create a project"
+                    {...register("projectName", {
+                      required: "Project name is required",
+                    })}
+                    error={!!errors.projectName}
+                    helperText={errors.projectName?.message}
+                  />
+                )}
+              /> */}
             </Box>
           </div>
         </Box>
@@ -256,7 +322,7 @@ export default function QuotePage() {
               component={Paper}
               className="!rounded-none MuiTable-root dark-purple-bg sales-table"
             >
-              <Table className="quote-outer table-fixed">
+              <Table className="quote-outer table-auto">
                 <TableHead>
                   <TableRow>
                     {[
@@ -266,7 +332,9 @@ export default function QuotePage() {
                       "Product/Service",
                       "Amount",
                       "Date",
-                      " View / Download / Archive",
+                      latestQuotes.some((quote) => quote.archieve === false)
+                        ? "View / Download / Archive / Edit"
+                        : "View / Download / Unarchive",
                     ].map((header) => (
                       <TableCell
                         key={header}
@@ -280,16 +348,25 @@ export default function QuotePage() {
                 <TableBody>
                   {latestQuotes.map((quote) => {
                     let product = [];
-                    console.log("quote", quote);
+                    console.log(
+                      "quote.productServices:",
+                      quote.productServices
+                    );
                     try {
-                      product = quote.productServices
-                        ? JSON.parse(quote.productServices)
-                        : [];
+                      if (typeof quote.productServices === "string") {
+                        product = JSON.parse(quote.productServices);
+                      } else if (Array.isArray(quote.productServices)) {
+                        product = quote.productServices;
+                      }
+                      if (!Array.isArray(product)) {
+                        product = [];
+                      }
                     } catch (error) {
                       console.error(
                         "Error parsing productServices JSON:",
                         error
                       );
+                      product = [];
                     }
                     return (
                       <TableRow key={quote.id}>
@@ -317,7 +394,6 @@ export default function QuotePage() {
                                     key={idx}
                                     className="flex gap-2 items-center mb-1 amount-outer"
                                   >
-                                    <span>{prod.amount}</span>
                                     {quote.currency == "USD" && (
                                       <Image
                                         src="/usd-icon.png"
@@ -350,6 +426,7 @@ export default function QuotePage() {
                                         height={18}
                                       />
                                     )}
+                                    <span>{prod.amount}</span>
                                   </div>
                                 );
                               })
@@ -362,62 +439,97 @@ export default function QuotePage() {
                               )
                             : "N/A"}
                         </TableCell>
-                        <TableCell className="!p-2 !text-white theme-border-light w-28 !text-sm !text-center document-button">
-                          <div className="flex flex-wrap gap-3">
-                            <Link
-                              href={`${process.env.NEXT_PUBLIC_GOOGLE_DOC_BASE_URL}${quote.templateId}`}
-                              target="_blank"
-                              className="mt-2"
+                        <TableCell className="!p-2 !text-white theme-border-light w-32 !text-sm !text-center document-button">
+                          <div className="flex flex-wrap gap-3 document-icons">
+                            <Tooltip
+                              title="View Google Document"
+                              placement="top"
+                              arrow
                             >
-                              <Button
-                                className="button-color !text-white !px-2 !leading-5"
-                                size="small"
+                              <Link
+                                href={`${process.env.NEXT_PUBLIC_GOOGLE_DOC_BASE_URL}${quote.templateId}`}
+                                target="_blank"
+                                className="mt-2"
                               >
-                                <VisibilityOutlinedIcon />
-                              </Button>
-                            </Link>
+                                <Button
+                                  className="button-color !text-white !px-2 !leading-5"
+                                  size="small"
+                                >
+                                  <VisibilityOutlinedIcon />
+                                </Button>
+                              </Link>
+                            </Tooltip>
 
-                            <Link
-                              href={`${process.env.NEXT_PUBLIC_GOOGLE_DOC_BASE_URL}${quote.templateId}/export?format=pdf`}
-                              target="_blank"
-                            >
-                              <Button
-                                className="button-color !text-white !px-2 !leading-5"
-                                size="small"
+                            <Tooltip title="Download PDF" placement="top" arrow>
+                              <Link
+                                href={`${process.env.NEXT_PUBLIC_GOOGLE_DOC_BASE_URL}${quote.templateId}/export?format=pdf`}
+                                target="_blank"
                               >
-                                <FileDownloadOutlinedIcon />
-                              </Button>
-                            </Link>
+                                <Button
+                                  className="button-color !text-white !px-2 !leading-5"
+                                  size="small"
+                                >
+                                  <FileDownloadOutlinedIcon />
+                                </Button>
+                              </Link>
+                            </Tooltip>
                             {quote.archieve === false ? (
-                              <Button
-                                onClick={() =>
-                                  archiveConfOpenHandler(quote.id, 1)
-                                }
-                                className="button-color !text-white !px-2 !leading-5"
-                                size="small"
+                              <Tooltip
+                                title="Move Quote to Archive"
+                                placement="top"
+                                arrow
                               >
-                                <ArchiveOutlinedIcon />{" "}
-                              </Button>
+                                <Button
+                                  onClick={() =>
+                                    archiveConfOpenHandler(quote.id, 1)
+                                  }
+                                  className="button-color !text-white !px-2 !leading-5"
+                                  size="small"
+                                >
+                                  <ArchiveOutlinedIcon />{" "}
+                                </Button>
+                              </Tooltip>
                             ) : (
-                              <Button
-                                onClick={() =>
-                                  archiveConfOpenHandler(quote.id, 0)
-                                }
-                                className="button-color !text-white !px-2 !leading-5"
-                                size="small"
+                              <Tooltip
+                                title="Unarchive Quote"
+                                placement="top"
+                                arrow
                               >
-                                <UnarchiveOutlinedIcon />
-                              </Button>
+                                <Button
+                                  onClick={() =>
+                                    archiveConfOpenHandler(quote.id, 0)
+                                  }
+                                  className="button-color !text-white !px-2 !leading-5"
+                                  size="small"
+                                >
+                                  <UnarchiveOutlinedIcon />
+                                </Button>
+                              </Tooltip>
                             )}
-
-                            <Link href={`/quote/${quote.id}`}>
-                              <Button
-                                className="button-color !text-white !px-2 !leading-5"
-                                size="small"
+                            {quote.archieve === false && (
+                              <Tooltip title="Edit Quote" placement="top" arrow>
+                                <Link href={`/quote/${quote.id}`}>
+                                  <Button
+                                    className="button-color !text-white !px-2 !leading-5"
+                                    size="small"
+                                  >
+                                    <EditTwoToneIcon />
+                                  </Button>
+                                </Link>
+                              </Tooltip>
+                            )}
+                            <Tooltip title="Clone Quote" placement="top" arrow>
+                              <Link
+                                href={`/quote/${quote.id}?source=clonequote`}
                               >
-                                <EditTwoToneIcon />
-                              </Button>
-                            </Link>
+                                <Button
+                                  className="button-color !text-white !px-2 !leading-5"
+                                  size="small"
+                                >
+                                  <ContentCopyOutlinedIcon />
+                                </Button>
+                              </Link>
+                            </Tooltip>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -433,9 +545,8 @@ export default function QuotePage() {
           </Typography>
         )}
       </Container>
-      {/* <QuoteModal open={quoteModalOpen} close={QuoteCloseModalHandler} /> */}
 
-      {/* /// archive confirmation modal */}
+      {/* archive confirmation modal */}
       <ConfirmationModal
         onConfirm={archiveConfirmationHandler}
         confirmMessage={

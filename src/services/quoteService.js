@@ -21,6 +21,10 @@ const QuoteServices = {
     return apiCient.put(`/quote/updateQuote?quoteId=${id}`, data);
   },
 
+  quoteupdate: (id, data) => {
+    return apiCient.put(`/quote/archiveUpdateQuote?quoteId=${id}`, data);
+  },
+
   getAllArchive: () => {
     return apiCient.get(`/project/getProject?archieve=1`);
   },
@@ -30,6 +34,11 @@ const QuoteServices = {
 
   getQuoteById: (id) => {
     return apiCient.get(`/quote/getQuoteById?quoteId=${id}`);
+  },
+
+  searchByProject: (data) => {
+    const query = data ? `?search=${encodeURIComponent(data)}` : "";
+    return apiCient.get(`/project/projectList${query}`);
   },
 };
 

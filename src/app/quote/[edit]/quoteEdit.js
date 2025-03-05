@@ -21,12 +21,13 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-export default function EditQuotes({ quoteId }) {
+export default function EditQuotes({ quoteId, source }) {
   const [isLoading, setIsLoading] = useState(false);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const router = useRouter();
 
+  console.log("quoteId", source);
   const currencyOptions = [
     { label: "USD", value: "USD" },
     { label: "ETH", value: "ETH" },
@@ -82,7 +83,7 @@ export default function EditQuotes({ quoteId }) {
   /// update quote
   const onSubmit = async (data) => {
     setIsLoading(true);
-    const formattedData = { ...data, date: new Date().toISOString() };
+    const formattedData = { ...data, total, date: new Date().toISOString() };
     try {
       const response = await createGoogleDoc(formattedData);
       if (response.status === "success" && response.documentId) {
@@ -92,17 +93,29 @@ export default function EditQuotes({ quoteId }) {
           docUrl: googleDocUrl,
           templateId: response.documentId,
         };
-        const res = await QuoteServices.addQuoteArchive(
-          quoteId,
-          formattedUpdatedData
-        );
-        if (res.status == true) {
-          successMsg(res.message);
-          router.push("/");
+        if (source == "clonequote") {
+          const res = await QuoteServices.addQutote(formattedUpdatedData);
+
+          if (res.status == true) {
+            successMsg("Quote clone successfully");
+            router.push("/");
+          }
+        } else {
+          const res = await QuoteServices.quoteupdate(
+            quoteId,
+            formattedUpdatedData
+          );
+          if (res.status == true) {
+            successMsg(res.message);
+            router.push("/");
+          }
         }
       }
     } catch (error) {
+      console.log("error", error);
+
       errorMsg(error);
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -136,14 +149,16 @@ export default function EditQuotes({ quoteId }) {
   return (
     <div className=" items-center justify-center min-h-screen  dark-purple-bg py-6 px-6 generate-quote">
       <h1 className="text-3xl text-bold theme-color text-center pt-6">
-        {" Edit  Quote"}
+        {!source || source !== "clonequote" ? " Edit  Quote" : "Clone Quote"}
       </h1>
       <Container className=" p-8 rounded-lg shadow-md !max-w-3xl mt-12 theme-border-light generate-quote-form">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <Grid container spacing={2} className="">
             <Grid item xs={12} md={12} lg={12}>
               <Autocomplete
-                className="form-login-input"
+                className={`form-login-input  ${
+                  !source && (source !== "clonequote" ? "project-field" : "")
+                }`}
                 freeSolo
                 options={projects.map((project) => project.label)}
                 value={selectedProject}
@@ -151,10 +166,14 @@ export default function EditQuotes({ quoteId }) {
                   setSelectedProject(newValue);
                   setValue("projectName", newValue, { shouldValidate: true });
                 }}
+                disabled={!source || source !== "clonequote"}
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Project Name"
+                    label={
+                      !source || (source !== "clonequote" && "Project Name")
+                    }
+                    disabled={!source || source !== "clonequote"}
                     variant="outlined"
                     placeholder="Search or type to create a project"
                     {...register("projectName", {
@@ -220,7 +239,14 @@ export default function EditQuotes({ quoteId }) {
                 {selectedCurrency}
               </Typography>
             </Grid>
-            <Grid item xs={5} md={5} lg={5} className="pt-px sales-save-button">
+            <Grid
+              item
+              xs={5}
+              md={5}
+              lg={5}
+              className="pt-px sales-save-button
+"
+            >
               <div className="flex gap-2 ">
                 <Button
                   type="submit"

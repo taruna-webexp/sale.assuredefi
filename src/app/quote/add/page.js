@@ -58,8 +58,6 @@ export default function AddQuote({ title }) {
     .reduce((sum, item) => sum + (Number(item.amount) * item.qty || 0), 0)
     .toFixed(2);
 
-  console.log(total); // Output: "123.45" (as a string)
-
   //submit handler
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -74,7 +72,7 @@ export default function AddQuote({ title }) {
           templateId: response.documentId,
         };
         const res = await QuoteServices.addQutote(formattedUpdatedData);
-        console.log("res", res);
+
         if (res.status == true) {
           successMsg(res.message);
           router.push("/");
@@ -104,7 +102,6 @@ export default function AddQuote({ title }) {
     } catch (error) {
       errorMsg(error);
       console.log("error", error);
-      // console.error("Error fetching projects:", error);
     }
   };
 
