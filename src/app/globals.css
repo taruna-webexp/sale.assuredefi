@@ -81,7 +81,13 @@ body {
   /* width: 25px; */
 }
 .document-button button {
-  min-width: 46px !important;
+  min-width: 40px !important;
+}
+.document-button button svg {
+  font-size: 20px;
+}
+.document-icons {
+  gap: 8px;
 }
 
 /* .form-login-input .MuiInputBase-root input {
@@ -122,7 +128,7 @@ body {
   background: #0a0724 !important;
 }
 .quote-outer thead th:last-child {
-  width: 240px;
+  width: 250px;
 }
 .filter-outer {
   justify-content: space-between;
@@ -231,6 +237,23 @@ body {
 .cost-field label,
 .quanity-field label {
   display: none;
+}
+@media (max-width: 1250px) {
+  .quote-outer thead th:last-child {
+    width: 185px;
+    min-width: 185px;
+  }
+  .document-icons {
+    gap: 4px;
+  }
+  .document-button button {
+    min-width: 30px !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+  .document-button button svg {
+    font-size: 16px;
+  }
 }
 
 @media (max-width: 950px) {
