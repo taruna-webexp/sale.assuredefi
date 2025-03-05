@@ -78,7 +78,10 @@ body {
   line-height: 1.25rem;
 }
 .amount-outer span {
-  width: 25px;
+  /* width: 25px; */
+}
+.document-button button {
+  min-width: 46px !important;
 }
 
 /* .form-login-input .MuiInputBase-root input {
@@ -119,7 +122,7 @@ body {
   background: #0a0724 !important;
 }
 .quote-outer thead th:last-child {
-  width: 215px;
+  width: 240px;
 }
 .filter-outer {
   justify-content: space-between;
@@ -156,6 +159,14 @@ body {
   padding: 0 8px;
   left: -2px;
 }
+.project-field .MuiInputBase-root input {
+  -webkit-text-fill-color: #656565 !important;
+  cursor: not-allowed;
+}
+.project-field .MuiOutlinedInput-root {
+  background: #222036;
+  cursor: not-allowed;
+}
 .line-item-collunm .item-button {
   padding-bottom: 10px;
   padding-top: 5px !important;
@@ -191,11 +202,10 @@ body {
   display: block;
   /* visibility: hidden; */
 }
-
 .remove-filed {
   position: absolute;
   right: 12px;
-  top: 42%;
+  top: 16px;
 }
 .add-qty-fields-space {
   padding-right: 28px !important;
@@ -211,6 +221,18 @@ body {
 .MuiFormHelperText-root {
   margin: 3px !important;
 }
+
+.add-qty-fields-space input[type="number"]::-webkit-inner-spin-button,
+.add-qty-fields-space input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.cost-field label,
+.quanity-field label {
+  display: none;
+}
+
 @media (max-width: 950px) {
   .document-button button {
     min-width: auto;
@@ -223,7 +245,7 @@ body {
     justify-content: center;
   }
   .sales-table table.quote-outer {
-    min-width: 700px;
+    min-width: 850px;
     table-layout: auto;
   }
   .sales-table {
@@ -233,6 +255,9 @@ body {
   .quote-outer tbody td:last-child {
     max-width: 108px;
     width: 108px !important;
+  }
+  .document-button button svg {
+    font-size: 16px;
   }
 }
 
@@ -263,9 +288,7 @@ body {
   .sales-table table tbody td {
     padding: 4px 4px !important;
   }
-  .document-button button svg {
-    font-size: 16px;
-  }
+
   .quote-outer thead th:last-child {
     width: 90px;
   }
@@ -313,5 +336,29 @@ body {
   }
   .add-item-collunm {
     flex-wrap: wrap;
+  }
+  .mobile-hidden {
+    display: none;
+  }
+  .add-item-collunm label.line-item-lable {
+    display: block !important;
+  }
+  .cost-field label,
+  .quanity-field label {
+    display: block;
+  }
+  .product-service-outer {
+    padding: 15px 15px 19px;
+    border-radius: 5px;
+    background: #070421;
+    border: 1px solid #c2ac3117;
+  }
+  .remove-filed {
+    right: 24px;
+    top: auto;
+    bottom: 50px;
+  }
+  .document-icons {
+    gap: 5px;
   }
 }

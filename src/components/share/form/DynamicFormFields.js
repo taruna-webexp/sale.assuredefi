@@ -33,95 +33,120 @@ const DynamicFormFields = ({ control, errors, clearErrors, setValue }) => {
     setValue("productServices", updatedFields, { shouldValidate: true });
 
     if (updatedFields.length === 0) {
-      clearErrors("productServices"); // remove validation  if  fields are delete
+      setValue("productServices", [], { shouldValidate: true });
     }
   };
 
   React.useEffect(() => {
-    clearErrors("productServices"); // clears validation  when fields are  remove
-  }, [fields]);
+    clearErrors("productServices");
+  }, [fields, clearErrors]);
 
   const handleProductChange = () => {};
 
   return (
     <Stack spacing={1} className="line-item-collunm">
       <Grid container spacing={2}>
-        <label className="line-item-lable w-full">Line Item</label>
+        {fields.length > 0 && (
+          <div
+            className={`flex w-full gap-3 add-item-collunm items-start mobile-hidden`}
+          >
+            <Grid item xs={12} md={5} className="relative !p-0">
+              <label className="line-item-lable w-full mb-3 ">Line Item</label>
+            </Grid>
+            <Grid item xs={12} md={3} className="relative !p-0">
+              <label className="line-item-lable w-full mb-3">Price/Cost</label>
+            </Grid>
+            <Grid item xs={12} md={4} className="relative !p-0">
+              <label className="line-item-lable w-full mb-3">QTY</label>
+            </Grid>
+          </div>
+        )}
         {fields.length > 0 &&
           fields.map((field, index) => {
             return (
-              <div
-                key={index}
-                className="w-full flex gap-4 pb-4 pe-4 item-row flex-wrap relative items-center"
-              >
-                {/* Autocomplete Input (Select) */}
+              <>
                 <div
-                  className={`flex w-full gap-3 add-item-collunm items-center `}
+                  key={field.id}
+                  className="w-full flex gap-4 pb-4 pe-4 item-row flex-wrap relative items-center"
                 >
-                  <Grid item xs={12} md={6} className="relative">
-                    <label className="line-item-lable invisible">
-                      Line Item
-                    </label>
+                  <div
+                    className={`flex w-full gap-3 add-item-collunm items-start product-service-outer`}
+                  >
+                    <Grid item xs={12} md={5} className="relative">
+                      <label className="line-item-lable mb-2 !mt-0 !hidden">
+                        Line Item
+                      </label>
 
-                    <FormInputSelectAutoComplete
-                      name={`productServices[${index}].productService`}
-                      control={control}
-                      label="Product/Service"
-                      options={quoteServices}
-                      className="capitalize form-login-input"
-                      handleChange={handleProductChange}
-                      errors={
-                        fields.length > 0 &&
-                        errors?.productServices?.[index]?.productService
-                      }
-                    />
-                  </Grid>
+                      <FormInputSelectAutoComplete
+                        name={`productServices[${index}].productService`}
+                        control={control}
+                        label="Product/Service"
+                        options={quoteServices}
+                        className="capitalize form-login-input"
+                        handleChange={handleProductChange}
+                        errors={
+                          fields.length > 0 &&
+                          errors?.productServices?.[index]?.productService
+                        }
+                      />
+                    </Grid>
 
-                  <Grid item xs={12} md={3} className="relative">
-                    <FormRepeaterInput
-                      control={control}
-                      label="Price/Cost"
-                      defaultValue=""
-                      name={`productServices[${index}].amount`}
-                      type="text"
-                      errors={errors}
-                      className="form-login-input"
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={3} className="relative">
-                    <FormRepeaterInput
-                      control={control}
-                      label="QTY"
-                      defaultValue="1"
-                      name={`productServices[${index}].qty`}
-                      type="number"
-                      errors={errors}
-                      variant="outlined"
-                      className={
-                        index == 0
-                          ? "form-login-input add-qty-fields-space"
-                          : " form-login-input add-qty-fields-space"
-                      }
-                    />
-                  </Grid>
-                </div>
-
-                {
-                  <Grid item xs={12} md={12} className="text-end remove-filed">
-                    <Typography
-                      variant="p-bod"
-                      className="text-red-500 text-right cursor-pointer remove-service text-sm"
-                      onClick={() => {
-                        removeField(index);
-                        // clearErrors(`productServices.${index}`);
-                      }}
+                    <Grid item xs={12} md={3} className="relative cost-field">
+                      <FormRepeaterInput
+                        control={control}
+                        label="Price/Cost"
+                        defaultValue=""
+                        name={`productServices[${index}].amount`}
+                        type="text"
+                        errors={errors}
+                        className="form-login-input "
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      md={4}
+                      className="relative quanity-field"
                     >
-                      <DeleteOutline />
-                    </Typography>
-                  </Grid>
-                }
-              </div>
+                      <FormRepeaterInput
+                        control={control}
+                        label="QTY"
+                        defaultValue="1"
+                        name={`productServices[${index}].qty`}
+                        type="number"
+                        errors={errors}
+                        variant="outlined"
+                        className={
+                          index == 0
+                            ? "form-login-input add-qty-fields-space"
+                            : " form-login-input add-qty-fields-space"
+                        }
+                      />
+                    </Grid>
+                  </div>
+
+                  {
+                    <Grid
+                      item
+                      xs={12}
+                      md={12}
+                      className="text-end remove-filed"
+                    >
+                      <Typography
+                        variant="p-bod"
+                        className="text-red-500 text-right cursor-pointer remove-service text-sm"
+                        onClick={() => {
+                          removeField(index);
+                          clearErrors(`productServices.${index}`);
+                        }}
+                      >
+                        <DeleteOutline />
+                      </Typography>
+                    </Grid>
+                  }
+                </div>
+              </>
             );
           })}
 
@@ -133,6 +158,13 @@ const DynamicFormFields = ({ control, errors, clearErrors, setValue }) => {
           >
             + Add Line Item
           </Button>
+
+          {errors.productServices &&
+            typeof errors.productServices.message === "string" && (
+              <Typography className="text-red-500 text-sm pt-4">
+                {errors.productServices.message}
+              </Typography>
+            )}
         </Grid>
       </Grid>
     </Stack>
