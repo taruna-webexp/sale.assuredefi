@@ -2,6 +2,6 @@ export const routesUrl = {
   home: "/",
   product: "/product",
   login: "/auth/login",
-  signUp: "/auth/signup",
+  registration: "/auth/registration",
   forgot: "/auth/resetpassword",
 };

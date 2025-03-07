@@ -39,6 +39,7 @@ export default function Login() {
     try {
       const res = await AuthServices.loginApi(data);
       if (res.status == true) {
+        successMsg(res.message);
         Cookies.set("accessToken", JSON.stringify(res.data[0].access_token), {
           expires: 7,
           sameSite: "Strict",
@@ -47,8 +48,10 @@ export default function Login() {
           expires: 7,
           sameSite: "Strict",
         });
-        successMsg(res.message);
-        router.push("/quote");
+
+        setTimeout(() => {
+          window.location.replace("/");
+        }, 2000);
       }
     } catch (error) {
       errorMsg(error);

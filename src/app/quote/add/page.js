@@ -72,7 +72,7 @@ export default function AddQuote({ title }) {
           templateId: response.documentId,
         };
         const res = await QuoteServices.addQutote(formattedUpdatedData);
-
+        console.log("res", res);
         if (res.status == true) {
           successMsg(res.message);
           router.push("/");
@@ -80,7 +80,7 @@ export default function AddQuote({ title }) {
       }
     } catch (error) {
       console.log("error", error);
-      // errorMsg(error);
+      errorMsg(error);
       console.log(error);
     } finally {
       setIsLoading(false);
@@ -127,6 +127,7 @@ export default function AddQuote({ title }) {
                   setSelectedProject(newValue);
                   setValue("projectName", newValue, { shouldValidate: true });
                 }}
+                clearIcon={null} // Hide the cancel icon
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -156,6 +157,19 @@ export default function AddQuote({ title }) {
               />
             </Grid>
             <Grid item xs={12} md={12} lg={12}>
+              <FormInput
+                control={control}
+                name="clientEmail"
+                type="email"
+                className="form-login-input"
+                placeholder="Enter email"
+                errors={errors}
+                label=" Email"
+                variant="outlined"
+                required
+              />
+            </Grid>
+            <Grid item xs={12} md={12} lg={12}>
               <FormInputSelect
                 options={currencyOptions}
                 control={control}
@@ -173,8 +187,10 @@ export default function AddQuote({ title }) {
               <DynamicFormFields
                 control={control}
                 errors={errors}
+                register={register}
                 clearErrors={clearErrors}
                 setValue={setValue}
+                watch={watch}
                 className="form-login-input"
               />
             </Grid>

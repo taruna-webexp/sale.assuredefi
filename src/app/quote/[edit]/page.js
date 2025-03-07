@@ -25,7 +25,7 @@ function EditQuote({ params }) {
           fontSize="small"
         />
       </div>
-    ); // Prevent rendering before params are resolved
+    );
 
   return (
     <div>

@@ -162,6 +162,7 @@ export default function EditQuotes({ quoteId, source }) {
                 freeSolo
                 options={projects.map((project) => project.label)}
                 value={selectedProject}
+                clearIcon={null}
                 onChange={(event, newValue) => {
                   setSelectedProject(newValue);
                   setValue("projectName", newValue, { shouldValidate: true });
@@ -199,6 +200,19 @@ export default function EditQuotes({ quoteId, source }) {
               />
             </Grid>
             <Grid item xs={12} md={12} lg={12}>
+              <FormInput
+                control={control}
+                name="clientEmail"
+                type="email"
+                className="form-login-input"
+                placeholder="Enter email"
+                errors={errors}
+                label="Email"
+                variant="outlined"
+                required
+              />
+            </Grid>
+            <Grid item xs={12} md={12} lg={12}>
               <FormInputSelect
                 options={currencyOptions}
                 control={control}
@@ -216,6 +230,8 @@ export default function EditQuotes({ quoteId, source }) {
               <DynamicFormFields
                 control={control}
                 errors={errors}
+                watch={watch}
+                register={register}
                 clearErrors={clearErrors}
                 setValue={setValue}
                 className="form-login-input"

@@ -27,7 +27,12 @@ const ApiClient = () => {
   });
 
   instance.interceptors.response.use(
-    (response) => response.data,
+    (response) => {
+      if (response.status === 401) {
+        return Promise.reject(response.status);
+      }
+      return response.data;
+    },
     (error) => {
       return Promise.reject(
         error?.response?.data?.message || "An error occurred"

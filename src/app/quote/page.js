@@ -54,7 +54,6 @@ export default function QuotePage() {
     formState: { errors },
   } = useForm();
 
-  // Fetch projects
   // useEffect(() => {
   //   const fetchProjects = async () => {
   //     try {
@@ -333,8 +332,8 @@ export default function QuotePage() {
                       "Amount",
                       "Date",
                       latestQuotes.some((quote) => quote.archieve === false)
-                        ? "View / Download / Archive / Edit"
-                        : "View / Download / Unarchive",
+                        ? "View / Download / Archive / Edit / Clone"
+                        : "View / Download / Unarchive / Clone",
                     ].map((header) => (
                       <TableCell
                         key={header}
