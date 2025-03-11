@@ -5,13 +5,36 @@ import { routesUrl } from "./utils/routeUrl";
 export const ProtectedRoutes = [routesUrl.home];
 export const UnprotectedRoutes = [
   routesUrl.login,
-  routesUrl.signUp,
+  // routesUrl.signUp,
   routesUrl.forgot,
 ];
 
 export async function middleware(request) {
+  const assureDefiVerificationEmail = process.env.NEXT_PUBLIC_ADMINEMAIL;
+  const userCookie = cookies().get("userDetail")?.value; // Get the raw cookie value
+  let parsedUser = null;
+
+  if (userCookie) {
+    try {
+      const decodedCookie = decodeURIComponent(userCookie); // Decode URL encoding
+      parsedUser = JSON.parse(decodedCookie); // Parse JSON data
+    } catch (error) {
+      console.error("Error parsing userDetail cookie:", error);
+    }
+  }
   const token = cookies().get("accessToken")?.value || null;
   const pathname = request.nextUrl.pathname;
+
+  // Admin the protected path
+  const adminPath = routesUrl.registration;
+
+  // Check if user is allowed
+  if (
+    request.nextUrl.pathname.startsWith(adminPath) &&
+    parsedUser?.email !== assureDefiVerificationEmail
+  ) {
+    return NextResponse.redirect(new URL("/", request.url)); // Redirect to home if not authorized
+  }
 
   if (
     pathname.startsWith("/_next/") || // Next.js assets

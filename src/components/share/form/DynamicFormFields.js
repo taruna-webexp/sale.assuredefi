@@ -1,19 +1,31 @@
-import React from "react";
-import { Grid, Button, Stack, Typography } from "@mui/material";
+"use client";
+import React, { useState } from "react";
+import {
+  Grid,
+  Button,
+  Stack,
+  Typography,
+  Autocomplete,
+  TextField,
+} from "@mui/material";
 import { useFieldArray } from "react-hook-form";
 import FormInputSelectAutoComplete from "./FormInputSelectAutoComplete";
 import { quoteServices } from "@/utils/static";
 import { DeleteOutline } from "@mui/icons-material";
 import FormRepeaterInput from "./FormRepeaterInput";
 
-const DynamicFormFields = ({ control, errors, clearErrors, setValue }) => {
-  console.log("errors", errors);
-
+const DynamicFormFields = ({
+  control,
+  errors,
+  clearErrors,
+  setValue,
+  register,
+  watch,
+}) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "productServices",
   });
-
   const isFirstRender = React.useRef(true);
   React.useEffect(() => {
     if (isFirstRender.current) {
@@ -40,8 +52,6 @@ const DynamicFormFields = ({ control, errors, clearErrors, setValue }) => {
   React.useEffect(() => {
     clearErrors("productServices");
   }, [fields, clearErrors]);
-
-  const handleProductChange = () => {};
 
   return (
     <Stack spacing={1} className="line-item-collunm">
@@ -76,18 +86,46 @@ const DynamicFormFields = ({ control, errors, clearErrors, setValue }) => {
                       <label className="line-item-lable mb-2 !mt-0 !hidden">
                         Line Item
                       </label>
-
-                      <FormInputSelectAutoComplete
+                      <Autocomplete
                         name={`productServices[${index}].productService`}
-                        control={control}
-                        label="Product/Service"
-                        options={quoteServices}
                         className="capitalize form-login-input"
-                        handleChange={handleProductChange}
-                        errors={
-                          fields.length > 0 &&
-                          errors?.productServices?.[index]?.productService
+                        freeSolo
+                        clearIcon={null}
+                        options={quoteServices.map((project) => project.label)}
+                        value={
+                          watch(`productServices[${index}].productService`) ||
+                          ""
                         }
+                        onChange={(event, newValue) => {
+                          setValue(
+                            `productServices[${index}].productService`,
+                            newValue,
+                            {
+                              shouldValidate: true,
+                            }
+                          );
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Product/Service"
+                            variant="outlined"
+                            placeholder="Search or type to create a project"
+                            {...register(
+                              `productServices[${index}].productService`,
+                              {
+                                required: "Product/Service is required",
+                              }
+                            )}
+                            error={
+                              !!errors?.productServices?.[index]?.productService
+                            }
+                            helperText={
+                              errors?.productServices?.[index]?.productService
+                                ?.message
+                            }
+                          />
+                        )}
                       />
                     </Grid>
 

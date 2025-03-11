@@ -12,11 +12,12 @@ export default function Header() {
   const pathName = usePathname();
   const router = useRouter();
   const [loginUser, setLoginUser] = useState("");
+  const assuredefyVerificationEmail = process.env.NEXT_PUBLIC_ADMINEMAIL;
 
   const handleLogout = () => {
     Cookies.remove("accessToken");
     Cookies.remove("userDetail");
-    successMsg("Logout");
+    successMsg("You have successfully logged out.");
     router.push("/auth/login");
   };
 
@@ -63,6 +64,14 @@ export default function Header() {
           <Typography variant="body2" className="text-center">
             <strong> {loginUser}</strong>
           </Typography>
+          {loginUser === assuredefyVerificationEmail && (
+            <Link href="/auth/registration">
+              <Typography variant="body2" className=" theme-color text-center">
+                <strong> Add New User</strong>
+              </Typography>
+            </Link>
+          )}
+
           <Button className="button-color !text-white" onClick={handleLogout}>
             Logout
           </Button>

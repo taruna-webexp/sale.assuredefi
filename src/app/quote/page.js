@@ -16,6 +16,7 @@ import {
   Link,
   Autocomplete,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
@@ -36,6 +37,9 @@ import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import Image from "next/image";
 import FormInputSelectAutoComplete from "@/components/share/form/FormInputSelectAutoComplete";
 import Tooltip from "@mui/material/Tooltip";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileSignature } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 export default function QuotePage() {
   const [projects, setProjects] = useState([]);
@@ -45,6 +49,7 @@ export default function QuotePage() {
   const [quoteId, setQuoteId] = useState("");
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectProjects, setSelectProjects] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     control,
@@ -54,7 +59,6 @@ export default function QuotePage() {
     formState: { errors },
   } = useForm();
 
-  // Fetch projects
   // useEffect(() => {
   //   const fetchProjects = async () => {
   //     try {
@@ -242,6 +246,48 @@ export default function QuotePage() {
     setArchiveConModal(false);
   };
 
+  const handleSignRequest = async (linkpdf, name, email) => {
+    console.log("linkpdf", linkpdf);
+    setIsLoading(true);
+    try {
+      const apiUrl = "https://www.signwell.com/api/v1/documents";
+
+      const headers = {
+        "Content-Type": "application/json",
+        "X-Api-Key": "YWNjZXNzOjk1ZjFhMmQ4YWZiN2E3MjkyZWJjMzQ4ZjY5M2NkMWZh",
+      };
+
+      const body = {
+        test_mode: true,
+        with_signature_page: true,
+        allow_decline: true,
+        allow_reassign: true,
+        embedded_signing: false, // If keeping false, remove send_email
+        files: [{ name: "document.pdf", file_url: linkpdf }],
+        recipients: [
+          {
+            id: Math.floor(Math.random() * 1000000).toString(), // Generating a random recipient ID
+            email,
+            name,
+          },
+        ],
+      };
+
+      const response = await axios.post(apiUrl, body, { headers });
+
+      console.log("API Response:", response.data);
+      successMsg(`Signature request sent to ${email}!`);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error creating sign request:",
+        error.response?.data || error.message
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Box className="flex items-center justify-center dark-purple-bg px-6 mb-3.5 sales-container">
       <Container className="p-8 rounded-lg shadow-md !max-w-full mt-12 theme-border-light sales-outer">
@@ -333,8 +379,8 @@ export default function QuotePage() {
                       "Amount",
                       "Date",
                       latestQuotes.some((quote) => quote.archieve === false)
-                        ? "View / Download / Archive / Edit"
-                        : "View / Download / Unarchive",
+                        ? "View / Download / Archive / Edit / Clone"
+                        : "View / Download / Unarchive / Clone",
                     ].map((header) => (
                       <TableCell
                         key={header}
@@ -388,48 +434,54 @@ export default function QuotePage() {
                         </TableCell>
                         <TableCell className="!p-2 !text-white theme-border-light !text-sm capitalize">
                           {product.length > 0
-                            ? product.map((prod, idx) => {
+                            ? (() => {
+                                const total = product
+                                  .reduce(
+                                    (sum, item) =>
+                                      sum +
+                                      (Number(item.amount) * item.qty || 0),
+                                    0
+                                  )
+                                  .toFixed(2);
+
                                 return (
-                                  <div
-                                    key={idx}
-                                    className="flex gap-2 items-center mb-1 amount-outer"
-                                  >
-                                    {quote.currency == "USD" && (
+                                  <div className="flex gap-2 items-center mb-1 amount-outer">
+                                    {quote.currency === "USD" && (
                                       <Image
                                         src="/usd-icon.png"
-                                        alt="Logo"
+                                        alt="USD Icon"
                                         width={18}
                                         height={18}
                                       />
                                     )}
-                                    {quote.currency == "BNB" && (
+                                    {quote.currency === "BNB" && (
                                       <Image
                                         src="/bnb-icon.png"
-                                        alt="bnb-icon"
+                                        alt="BNB Icon"
                                         width={18}
                                         height={18}
                                       />
                                     )}
-                                    {quote.currency == "SOL" && (
+                                    {quote.currency === "SOL" && (
                                       <Image
                                         src="/solana-icon.png"
-                                        alt="sol-icon"
+                                        alt="SOL Icon"
                                         width={18}
                                         height={18}
                                       />
                                     )}
-                                    {quote.currency == "ETH" && (
+                                    {quote.currency === "ETH" && (
                                       <Image
                                         src="/eth-icon.png"
-                                        alt="sol-icon"
+                                        alt="ETH Icon"
                                         width={18}
                                         height={18}
                                       />
                                     )}
-                                    <span>{prod.amount}</span>
+                                    <span>{total}</span>
                                   </div>
                                 );
-                              })
+                              })()
                             : "N/A"}
                         </TableCell>
                         <TableCell className="!p-2 !text-white theme-border-light !text-sm capitalize">
@@ -529,6 +581,31 @@ export default function QuotePage() {
                                   <ContentCopyOutlinedIcon />
                                 </Button>
                               </Link>
+                            </Tooltip>
+                            <Tooltip title="Sign Docs" placement="top" arrow>
+                              <Button
+                                onClick={() =>
+                                  handleSignRequest(
+                                    `${process.env.NEXT_PUBLIC_GOOGLE_DOC_BASE_URL}${quote.templateId}/export?format=pdf`,
+                                    quote.clientName,
+                                    quote.clientEmail
+                                  )
+                                }
+                                className="button-color !text-white !px-2 !leading-5"
+                                size="small"
+                              >
+                                {isLoading ? (
+                                  <CircularProgress
+                                    className="theme-color !text-sm !w-5 !h-5"
+                                    fontSize="small"
+                                  />
+                                ) : (
+                                  <FontAwesomeIcon
+                                    icon={faFileSignature}
+                                    className="!text-md"
+                                  />
+                                )}
+                              </Button>
                             </Tooltip>
                           </div>
                         </TableCell>

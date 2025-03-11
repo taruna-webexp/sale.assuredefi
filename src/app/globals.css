@@ -81,7 +81,7 @@ body {
   /* width: 25px; */
 }
 .document-button button {
-  min-width: 40px !important;
+  min-width: 45px !important;
 }
 .document-button button svg {
   font-size: 20px;
@@ -128,7 +128,7 @@ body {
   background: #0a0724 !important;
 }
 .quote-outer thead th:last-child {
-  width: 250px;
+  width: 170px;
 }
 .filter-outer {
   justify-content: space-between;
@@ -238,21 +238,49 @@ body {
 .quanity-field label {
   display: none;
 }
+
+.autocomplete-text-field .MuiOutlinedInput-root input {
+  width: 100% !important;
+  padding: 1px 1px !important;
+}
+.quote-outer thead th:nth-child(5),
+.quote-outer tbody td:nth-child(5) {
+  max-width: 120px;
+  width: 120px;
+}
+.quote-outer thead th:first-child,
+.quote-outer tbody td:first-child {
+  max-width: 200px;
+  width: 200px;
+}
 @media (max-width: 1250px) {
   .quote-outer thead th:last-child {
-    width: 185px;
-    min-width: 185px;
+    width: 135px;
+    min-width: 135px;
   }
   .document-icons {
     gap: 4px;
   }
   .document-button button {
-    min-width: 30px !important;
+    min-width: 36px !important;
     padding-left: 6px !important;
     padding-right: 6px !important;
   }
   .document-button button svg {
     font-size: 16px;
+  }
+  .sales-table table.quote-outer {
+    min-width: 1100px;
+    table-layout: auto;
+  }
+  .sales-table {
+    overflow-y: auto;
+    position: relative;
+  }
+  .quote-outer thead th:first-child,
+  .quote-outer tbody td:first-child {
+    max-width: inherit;
+    width: auto;
   }
 }
 
@@ -267,14 +295,7 @@ body {
   .document-button div.flex {
     justify-content: center;
   }
-  .sales-table table.quote-outer {
-    min-width: 850px;
-    table-layout: auto;
-  }
-  .sales-table {
-    overflow-y: auto;
-    position: relative;
-  }
+
   .quote-outer tbody td:last-child {
     max-width: 108px;
     width: 108px !important;

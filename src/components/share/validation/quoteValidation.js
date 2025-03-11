@@ -1,6 +1,9 @@
 import * as Yup from "yup";
 
 export const addQuoteSchema = Yup.object().shape({
+  clientEmail: Yup.string()
+    .email("Invalid email format")
+    .required("Client email is required"),
   clientName: Yup.string().required("Client name is required"),
   projectName: Yup.string().required("Project name is required"),
   productServices: Yup.array()
