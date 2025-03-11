@@ -127,7 +127,7 @@ export default function AddQuote({ title }) {
                   setSelectedProject(newValue);
                   setValue("projectName", newValue, { shouldValidate: true });
                 }}
-                clearIcon={null} // Hide the cancel icon
+                clearIcon={null}
                 renderInput={(params) => (
                   <TextField
                     {...params}

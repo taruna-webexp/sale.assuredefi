@@ -81,7 +81,7 @@ body {
   /* width: 25px; */
 }
 .document-button button {
-  min-width: 40px !important;
+  min-width: 45px !important;
 }
 .document-button button svg {
   font-size: 20px;
@@ -128,7 +128,7 @@ body {
   background: #0a0724 !important;
 }
 .quote-outer thead th:last-child {
-  width: 250px;
+  width: 170px;
 }
 .filter-outer {
   justify-content: space-between;
@@ -255,14 +255,14 @@ body {
 }
 @media (max-width: 1250px) {
   .quote-outer thead th:last-child {
-    width: 185px;
-    min-width: 185px;
+    width: 135px;
+    min-width: 135px;
   }
   .document-icons {
     gap: 4px;
   }
   .document-button button {
-    min-width: 30px !important;
+    min-width: 36px !important;
     padding-left: 6px !important;
     padding-right: 6px !important;
   }

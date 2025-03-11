@@ -2,7 +2,14 @@
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Box, Typography, Container, Grid } from "@mui/material";
+import {
+  Button,
+  Box,
+  Typography,
+  Container,
+  Grid,
+  CircularProgress,
+} from "@mui/material";
 import FormInput from "@/components/share/form/FormInput";
 import { registerValdation } from "@/components/share/validation/registerValdation";
 import Link from "next/link";
@@ -10,9 +17,12 @@ import AuthServices from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { errorMsg, successMsg } from "@/components/toaster/msg";
 import Cookies from "js-cookie";
+import { useState } from "react";
 
 export default function SignUp() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     control,
     reset,
@@ -30,6 +40,8 @@ export default function SignUp() {
 
   const onSubmit = async (data) => {
     try {
+      setIsLoading(true);
+
       const res = await AuthServices.registerApi(data);
       console.log("Submitted Data:", res);
       successMsg(res.message);
@@ -38,6 +50,8 @@ export default function SignUp() {
     } catch (error) {
       errorMsg(error);
       console.log("error", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -143,7 +157,14 @@ export default function SignUp() {
                 fullWidth
                 sx={{ marginTop: 2 }}
               >
-                Register
+                {isLoading ? (
+                  <CircularProgress
+                    className="theme-color !text-sm !w-5 !h-5"
+                    fontSize="small"
+                  />
+                ) : (
+                  "Register"
+                )}
               </Button>
             </form>
 
