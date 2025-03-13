@@ -9,7 +9,6 @@ import {
   TextField,
 } from "@mui/material";
 import { useFieldArray } from "react-hook-form";
-import FormInputSelectAutoComplete from "./FormInputSelectAutoComplete";
 import { quoteServices } from "@/utils/static";
 import { DeleteOutline } from "@mui/icons-material";
 import FormRepeaterInput from "./FormRepeaterInput";
@@ -22,7 +21,7 @@ const DynamicFormFields = ({
   register,
   watch,
 }) => {
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append } = useFieldArray({
     control,
     name: "productServices",
   });

@@ -13,7 +13,6 @@ export const createGoogleDoc = async (data) => {
     }
 
     const responseData = await response.json();
-    console.log("Google Doc Created:", responseData);
     return responseData;
   } catch (error) {
     console.error("Error creating Google Doc:", error);

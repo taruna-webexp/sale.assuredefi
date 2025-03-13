@@ -40,6 +40,10 @@ const QuoteServices = {
     const query = data ? `?search=${encodeURIComponent(data)}` : "";
     return apiCient.get(`/project/projectList${query}`);
   },
+
+  signwellApi: (data) => {
+    return apiCient.post(`signWell/createSignWell`, data);
+  },
 };
 
 export default QuoteServices;

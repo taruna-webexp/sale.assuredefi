@@ -12,7 +12,6 @@ export default function FormInput({
   placeholder,
   defaultValue,
 }) {
-  console.log("error", errors);
   return (
     <FormControl fullWidth className={className}>
       {label && <label className="mb-2">{label}</label>}

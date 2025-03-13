@@ -1,7 +1,7 @@
 // "use client";
 import axios from "axios";
 import Cookies from "js-cookie";
-
+import { redirect } from "next/navigation";
 const ApiClient = () => {
   let token = "";
 
@@ -27,8 +27,20 @@ const ApiClient = () => {
   });
 
   instance.interceptors.response.use(
-    (response) => response.data,
+    (response) => {
+      if (response.status === 401) {
+        return Promise.reject(response.status);
+      }
+      return response.data;
+    },
+
     (error) => {
+      if (error.status === 401) {
+        console.log("error", error.status);
+      
+        redirect("/auth/login");
+      }
+
       return Promise.reject(
         error?.response?.data?.message || "An error occurred"
       );

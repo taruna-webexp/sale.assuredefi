@@ -18,7 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import {useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 export default function EditQuotes({ quoteId, source }) {
@@ -27,7 +27,6 @@ export default function EditQuotes({ quoteId, source }) {
   const [selectedProject, setSelectedProject] = useState(null);
   const router = useRouter();
 
-  console.log("quoteId", source);
   const currencyOptions = [
     { label: "USD", value: "USD" },
     { label: "ETH", value: "ETH" },
@@ -112,10 +111,7 @@ export default function EditQuotes({ quoteId, source }) {
         }
       }
     } catch (error) {
-      console.log("error", error);
-
       errorMsg(error);
-      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -135,8 +131,6 @@ export default function EditQuotes({ quoteId, source }) {
       }
     } catch (error) {
       errorMsg(error);
-      console.log("error", error);
-      // console.error("Error fetching projects:", error);
     }
   };
 

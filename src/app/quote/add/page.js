@@ -3,7 +3,6 @@ import DynamicFormFields from "@/components/share/form/DynamicFormFields";
 import FormInput from "@/components/share/form/FormInput";
 import FormInputSelect from "@/components/share/form/FormInputSelect";
 import { addQuoteSchema } from "@/components/share/validation/quoteValidation";
-
 import { errorMsg, successMsg } from "@/components/toaster/msg";
 import QuoteServices from "@/services/quoteService";
 import { createGoogleDoc } from "@/services/template";
@@ -72,16 +71,14 @@ export default function AddQuote({ title }) {
           templateId: response.documentId,
         };
         const res = await QuoteServices.addQutote(formattedUpdatedData);
-        console.log("res", res);
+      
         if (res.status == true) {
           successMsg(res.message);
           router.push("/");
         }
       }
     } catch (error) {
-      console.log("error", error);
       errorMsg(error);
-      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +98,6 @@ export default function AddQuote({ title }) {
       }
     } catch (error) {
       errorMsg(error);
-      console.log("error", error);
     }
   };
 
