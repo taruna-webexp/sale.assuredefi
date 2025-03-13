@@ -14,32 +14,26 @@ import {
   TableHead,
   TableRow,
   Link,
-  Autocomplete,
-  TextField,
   CircularProgress,
+  TextField,
+  Autocomplete,
 } from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import QuoteServices from "@/services/quoteService";
 import moment from "moment";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
-import FormInputSelectWithHandler from "@/components/share/form/FormInputSelectWithHandler";
 import { useForm } from "react-hook-form";
 import FormInput from "@/components/share/form/FormInput";
-import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import { errorMsg, successMsg } from "@/components/toaster/msg";
-import ArchiveIcon from "@mui/icons-material/Archive";
 import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined";
 import UnarchiveOutlinedIcon from "@mui/icons-material/UnarchiveOutlined";
-import QuoteModal from "@/components/share/modal/Quote";
 import ConfirmationModal from "@/components/share/modal/Archive";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import Image from "next/image";
-import FormInputSelectAutoComplete from "@/components/share/form/FormInputSelectAutoComplete";
 import Tooltip from "@mui/material/Tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileSignature } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
 
 export default function QuotePage() {
   const [projects, setProjects] = useState([]);
@@ -47,73 +41,77 @@ export default function QuotePage() {
   const [archive, setArchive] = useState();
   const [archiveConModal, setArchiveConModal] = useState(false);
   const [quoteId, setQuoteId] = useState("");
-  const [selectedProject, setSelectedProject] = useState(null);
   const [selectProjects, setSelectProjects] = useState("");
+  const [loading, setLoading] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-
+  const [selectedProject, setSelectedProject] = useState({
+    label: "All Active",
+    value: "all-projects",
+  });
+  const [searchInput, setSearchInput] = useState("");
   const {
     control,
     watch,
-    setValue,
-    register,
     formState: { errors },
   } = useForm();
 
-  // useEffect(() => {
-  //   const fetchProjects = async () => {
-  //     try {
-  //       const response = await QuoteServices.getproject();
-  //       if (response.status && response.data) {
-  //         const formattedProjects = response.data.map((project) => ({
-  //           ...project,
-  //           label: project.name,
-  //           value: project.id,
-  //         }));
+  // Function to fetch default projects from API
+  const fetchDefaultProjects = async () => {
+    try {
+      setIsLoading(true);
+      const response = await QuoteServices.searchByProject();
+      if (response.status && response.data) {
+        const formattedProjects = response.data.map((project) => ({
+          label: project.name,
+          value: project.id,
+        }));
 
-  //         const projectWithStaticOption = [
-  //           { label: "All Active", value: "all-projects" },
-  //           { label: "All Archive", value: "0" },
-  //           ...formattedProjects,
-  //         ];
-  //         setProjects(projectWithStaticOption);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching projects:", error);
-  //     }
-  //   };
+        const projectWithStaticOptions = [
+          { label: "All Active", value: "all-projects" },
+          { label: "All Archive", value: "0" },
+          ...formattedProjects,
+        ];
 
-  //   fetchProjects();
-  // }, []);
+        setProjects(projectWithStaticOptions);
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  // Fetch Initial Project List on Mount
   useEffect(() => {
-    const searchchProjects = async () => {
-      try {
-        const response = await QuoteServices.getproject();
+    fetchDefaultProjects();
+  }, []);
 
-        if (response.status && response.data) {
-          const formattedProjects = response.data.map((project) => ({
-            ...project,
-            label: project.name,
-            value: project.id,
-          }));
-
-          const projectWithStaticOption = [
-            { label: "All Active", value: "all-projects" },
-            { label: "All Archive", value: "0" },
-            ...formattedProjects,
-          ];
-          setProjects(projectWithStaticOption);
+  // Fetch Projects Based on Search Input (3 or more characters)
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      if (searchInput.length >= 3) {
+        try {
+          const response = await QuoteServices.getProjectBySearch(searchInput);
+          if (response.status && response.data.length) {
+            const formattedProjects = response.data.map((project) => ({
+              label: project.name,
+              value: project.id,
+            }));
+            setProjects(formattedProjects);
+          }
+        } catch (error) {
+          setLatestQuotes([]);
+          console.error("Error fetching search results:", error);
         }
-      } catch (error) {
-        console.error("Error fetching projects:", error);
       }
     };
 
-    searchchProjects();
-  }, []);
+    fetchSearchResults();
+  }, [searchInput]);
 
-  //get all quotes
+  // Fetch All Quotes
   const fetchAllQuotes = async () => {
+    setIsLoading(true);
     try {
       const { data } = await QuoteServices.allQutote();
       if (data.length) {
@@ -128,18 +126,21 @@ export default function QuotePage() {
       }
     } catch (error) {
       console.error("Error fetching quotes:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
-  // Fetch all quotes
+
   useEffect(() => {
     fetchAllQuotes();
   }, []);
 
-  // get all quotes base on project and archive id
-  const filterProjectHandler = async (selectedProject) => {
-    setSelectProjects(selectedProject);
+  // Filter Quotes Based on Selected Project
+  const filterProjectHandler = async (selectedProjectValue) => {
+    setSelectedProject(projects.find((p) => p.value === selectedProjectValue));
+    setIsLoading(true);
     try {
-      if (selectedProject === "0") {
+      if (selectedProjectValue === "0") {
         const response = await QuoteServices.getAllArchive();
         if (response.status && response.data) {
           const sortedQuotes = response.data.flatMap((project) =>
@@ -151,12 +152,13 @@ export default function QuotePage() {
           );
           setLatestQuotes(sortedQuotes);
         }
-      } else if (selectedProject === "all-projects") {
+      } else if (selectedProjectValue === "all-projects") {
         fetchAllQuotes();
       } else {
         try {
-          const response = await QuoteServices.getProjectById(selectedProject);
-
+          const response = await QuoteServices.getProjectById(
+            selectedProjectValue
+          );
           if (response.status && response.data) {
             const project = response.data;
             const sortedQuotes = project.quotes.map((quote) => ({
@@ -164,7 +166,6 @@ export default function QuotePage() {
               projectName: project.name,
               projectUpdatedAt: project.updatedAt,
             }));
-
             setLatestQuotes(sortedQuotes);
           }
         } catch (error) {
@@ -175,10 +176,12 @@ export default function QuotePage() {
     } catch (error) {
       errorMsg("Error fetching quotes: " + error.message);
       console.error("Error fetching quotes:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  const searchQuoteValue = watch("search-project")?.trim() || ""; //track current value for search field
+  //track current value for search field
+  const searchQuoteValue = watch("search-project")?.trim() || "";
 
   useEffect(() => {
     const fetchSearchResults = async () => {
@@ -195,23 +198,16 @@ export default function QuotePage() {
             }))
           );
           setLatestQuotes(sortedQuotes);
+        } else {
+          setLatestQuotes([]);
         }
       } catch (error) {
         console.error("Error fetching search results:", error);
-        setLatestQuotes([]);
       }
     };
 
     fetchSearchResults();
   }, [searchQuoteValue]);
-
-  /// Quaote Edit Modal
-  // const QuoteOpenModalHandler = () => {
-  //   setQuoteModalOpen(true);
-  // };
-  // const QuoteCloseModalHandler = () => {
-  //   setQuoteModalOpen(false);
-  // };
 
   // Archive confirmation handler
   const archiveConfirmationHandler = async () => {
@@ -236,58 +232,44 @@ export default function QuotePage() {
     }
   };
 
+  // Archive confirmation open handler
   const archiveConfOpenHandler = (id, isArchive) => {
     setArchive(isArchive);
     setArchiveConModal(true);
     setQuoteId(id);
   };
+  // Archive confirmation close handler
 
   const archiveConfCloseHandler = () => {
     setArchiveConModal(false);
   };
 
-  const handleSignRequest = async (linkpdf, name, email) => {
-    console.log("linkpdf", linkpdf);
-    setIsLoading(true);
+  //Signwell api handle
+  const handleSignRequest = async (
+    fileName,
+    fileUrl,
+    clientName,
+    email,
+    quoteId
+  ) => {
+    const data = { email, fileName: `${fileName}.pdf`, fileUrl, clientName };
     try {
-      const apiUrl = "https://www.signwell.com/api/v1/documents";
-
-      const headers = {
-        "Content-Type": "application/json",
-        "X-Api-Key": "YWNjZXNzOjk1ZjFhMmQ4YWZiN2E3MjkyZWJjMzQ4ZjY5M2NkMWZh",
-      };
-
-      const body = {
-        test_mode: true,
-        with_signature_page: true,
-        allow_decline: true,
-        allow_reassign: true,
-        embedded_signing: false, // If keeping false, remove send_email
-        files: [{ name: "document.pdf", file_url: linkpdf }],
-        recipients: [
-          {
-            id: Math.floor(Math.random() * 1000000).toString(), // Generating a random recipient ID
-            email,
-            name,
-          },
-        ],
-      };
-
-      const response = await axios.post(apiUrl, body, { headers });
-
-      console.log("API Response:", response.data);
+      setLoading((prev) => ({ ...prev, [quoteId]: true })); // Set loading for specific button
+      const response = await QuoteServices.signwellApi(data);
       successMsg(`Signature request sent to ${email}!`);
+      fetchAllQuotes();
       return response.data;
     } catch (error) {
-      console.error(
-        "Error creating sign request:",
-        error.response?.data || error.message
-      );
+      errorMsg(error);
     } finally {
-      setIsLoading(false);
+      setLoading((prev) => ({ ...prev, [quoteId]: false })); // Reset loading state
     }
   };
 
+  //Autocomplete clear value handler
+  const handleClearValue = () => {
+    fetchDefaultProjects();
+  };
   return (
     <Box className="flex items-center justify-center dark-purple-bg px-6 mb-3.5 sales-container">
       <Container className="p-8 rounded-lg shadow-md !max-w-full mt-12 theme-border-light sales-outer">
@@ -324,45 +306,45 @@ export default function QuotePage() {
               />
             </Box>
             <Box className="filter-input">
-              <FormInputSelectWithHandler
-                options={[...projects]}
-                control={control}
-                errors={errors}
-                className="form-login-input select-project"
-                name="projects"
-                variant="outlined"
-                defaultValue="all-projects"
-                onChange={filterProjectHandler}
-              />
-
-              {/* <Autocomplete
+              <Autocomplete
                 className="form-login-input"
                 freeSolo
-                options={projects.map((project) => project.label)}
-                value={selectedProject}
+                options={projects}
+                getOptionLabel={(option) => option.label || ""}
+                value={selectedProject} // Keeps the selected value
+                onInputChange={(event, newInputValue) => {
+                  if (event?.type === "change") {
+                    setSearchInput(newInputValue);
+                  }
+                }}
                 onChange={(event, newValue) => {
-                  setSelectedProject(newValue);
-                  setValue("projectName", newValue, { shouldValidate: true });
+                  if (newValue) {
+                    setSelectedProject(newValue);
+                    filterProjectHandler(newValue.value);
+                  } else {
+                    handleClearValue();
+                  }
                 }}
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Project Name"
+                    className="autocomplete-text-field"
                     variant="outlined"
                     placeholder="Search or type to create a project"
-                    {...register("projectName", {
-                      required: "Project name is required",
-                    })}
-                    error={!!errors.projectName}
-                    helperText={errors.projectName?.message}
                   />
                 )}
-              /> */}
+              />
             </Box>
           </div>
         </Box>
-
-        {latestQuotes.length ? (
+        {isLoading ? (
+          <div className="text-center">
+            <CircularProgress
+              className="theme-color !text-sm !w-5 !h-5"
+              fontSize="small"
+            />
+          </div>
+        ) : latestQuotes.length > 0 ? (
           <div className="main-sale">
             <TableContainer
               component={Paper}
@@ -394,10 +376,7 @@ export default function QuotePage() {
                 <TableBody>
                   {latestQuotes.map((quote) => {
                     let product = [];
-                    console.log(
-                      "quote.productServices:",
-                      quote.productServices
-                    );
+
                     try {
                       if (typeof quote.productServices === "string") {
                         product = JSON.parse(quote.productServices);
@@ -582,31 +561,50 @@ export default function QuotePage() {
                                 </Button>
                               </Link>
                             </Tooltip>
-                            <Tooltip title="Sign Docs" placement="top" arrow>
-                              <Button
-                                onClick={() =>
-                                  handleSignRequest(
-                                    `${process.env.NEXT_PUBLIC_GOOGLE_DOC_BASE_URL}${quote.templateId}/export?format=pdf`,
-                                    quote.clientName,
-                                    quote.clientEmail
-                                  )
-                                }
-                                className="button-color !text-white !px-2 !leading-5"
-                                size="small"
+                            {quote.signWellId !== null ? (
+                              <Tooltip
+                                title="Documents Signed"
+                                placement="top"
+                                arrow
                               >
-                                {isLoading ? (
-                                  <CircularProgress
-                                    className="theme-color !text-sm !w-5 !h-5"
-                                    fontSize="small"
-                                  />
-                                ) : (
+                                <Button
+                                  className="button-color !text-white !px-2 !leading-5 !cursor-not-allowed"
+                                  size="small"
+                                >
                                   <FontAwesomeIcon
                                     icon={faFileSignature}
                                     className="!text-md"
                                   />
-                                )}
-                              </Button>
-                            </Tooltip>
+                                </Button>
+                              </Tooltip>
+                            ) : (
+                              <Tooltip title="Sign Docs" placement="top" arrow>
+                                <Button
+                                  onClick={() =>
+                                    handleSignRequest(
+                                      quote.projectName,
+                                      `${process.env.NEXT_PUBLIC_GOOGLE_DOC_BASE_URL}${quote.templateId}/export?format=pdf`,
+                                      quote.clientName,
+                                      quote.clientEmail,
+                                      quote.id
+                                    )
+                                  }
+                                  className={`button-color !text-white !px-2 !leading-5 ${
+                                    quote.signWellId !== null ? "disabled" : ""
+                                  }`}
+                                  size="small"
+                                >
+                                  {loading[quote.id] ? (
+                                    <CircularProgress className="theme-color !w-5 !h-5" />
+                                  ) : (
+                                    <FontAwesomeIcon
+                                      icon={faFileSignature}
+                                      className="!text-md"
+                                    />
+                                  )}
+                                </Button>
+                              </Tooltip>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>

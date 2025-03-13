@@ -46,3 +46,10 @@ export const quoteCurrencyOptions = [
   { label: "BNB", value: "BNB" },
   { label: "SOL", value: "SOL" },
 ];
+
+export const currencyOptions = [
+  { label: "USD", value: "USD" },
+  { label: "ETH", value: "ETH" },
+  { label: "BNB", value: "BNB" },
+  { label: "SOL", value: "SOL" },
+];

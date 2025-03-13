@@ -16,7 +16,6 @@ import Link from "next/link";
 import AuthServices from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { errorMsg, successMsg } from "@/components/toaster/msg";
-import Cookies from "js-cookie";
 import { useState } from "react";
 
 export default function SignUp() {
@@ -43,13 +42,11 @@ export default function SignUp() {
       setIsLoading(true);
 
       const res = await AuthServices.registerApi(data);
-      console.log("Submitted Data:", res);
       successMsg(res.message);
       router.push("/");
       reset();
     } catch (error) {
       errorMsg(error);
-      console.log("error", error);
     } finally {
       setIsLoading(false);
     }

@@ -42,7 +42,7 @@ export default function ResetPassword() {
       }
     } catch (error) {
       errorMsg(error);
-      console.log("Error:", error);
+      errorMsg(error);
     } finally {
       setIsLoading(false);
     }
